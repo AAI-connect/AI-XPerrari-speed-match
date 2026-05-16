@@ -2,17 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=none">
     <title>Speed Match Game</title>
     <style>
         :root {
-            --bg-color: #1a1a2e;
-            --panel-color: #16213e;
-            --accent-color: #0f3460;
-            --text-color: #e94560;
-            --light-text: #ffffff;
-            --correct-color: #4cd137;
-            --wrong-color: #e84118;
+            --bg-dark: #0a0a16;
+            --panel-bg: rgba(22, 22, 46, 0.85);
+            --neon-pink: #ff2a74;
+            --neon-blue: #00f0ff;
+            --neon-purple: #9d4edd;
+            --correct-green: #39ff14;
+            --wrong-red: #ff3131;
+            --text-light: #ffffff;
         }
 
         * {
@@ -23,19 +24,26 @@
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--light-text);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            height: -webkit-fill-available; /* Fix for mobile Safari address bar */
+            height: -webkit-fill-available;
             overflow: hidden;
         }
 
-        html {
-            height: -webkit-fill-available;
+        /* --- BACKGROUND CANVAS --- */
+        .bg-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
         }
 
         .screen {
@@ -49,87 +57,101 @@
             top: 0;
             left: 0;
             padding: 20px;
+            z-index: 2;
         }
 
         .active {
             display: flex;
         }
 
-        /* --- HOME SCREEN --- */
+        /* --- MODERN FANCY HOME SCREEN --- */
         #home-screen {
-            background: linear-gradient(135deg, var(--bg-color), var(--panel-color));
+            background: radial-gradient(circle at center, #1b123a 0%, #050212 100%);
+        }
+
+        .title-container {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: pulse 2s infinite alternate;
         }
 
         h1 {
-            font-size: 8vw;
-            max-font-size: 3rem;
-            color: var(--text-color);
-            margin-bottom: 2rem;
-            text-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
-            letter-spacing: 2px;
-            text-align: center;
+            font-size: 3rem;
+            font-weight: 900;
+            margin: 0;
+            background: linear-gradient(45deg, var(--neon-pink), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
+            letter-spacing: 3px;
+            text-transform: uppercase;
         }
 
-        .btn {
-            padding: 15px 40px;
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: var(--light-text);
-            background-color: var(--text-color);
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--neon-blue);
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        .btn-play {
+            padding: 18px 50px;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #fff;
+            background: linear-gradient(45deg, #ff007f, #7928ca);
             border: none;
-            border-radius: 50px;
+            border-radius: 40px;
             cursor: pointer;
+            box-shadow: 0 0 25px rgba(255, 0, 127, 0.5);
             transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .btn:hover, .btn:active {
-            transform: scale(1.05);
+        .btn-play:active {
+            transform: scale(0.95);
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.7);
         }
 
         .ai-box {
             position: absolute;
-            bottom: 5%;
-            background-color: var(--panel-color);
-            border: 2px solid var(--accent-color);
-            padding: 10px 20px;
-            border-radius: 15px;
+            bottom: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 12px 28px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: background 0.3s;
+        }
+
+        .ai-box:active {
+            background: rgba(0, 240, 255, 0.15);
         }
 
         .ai-logo {
-            width: 25px;
-            height: 25px;
-            fill: var(--text-color);
+            width: 28px;
+            height: 28px;
+            fill: var(--neon-blue);
+            filter: drop-shadow(0 0 5px var(--neon-blue));
         }
 
         .ai-text {
-            font-weight: 600;
+            font-weight: 700;
             font-size: 1rem;
+            color: var(--neon-blue);
+            letter-spacing: 1px;
         }
 
-        /* --- UI CLOSE BUTTONS --- */
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 2.5rem;
-            color: #fff;
-            cursor: pointer;
-            user-select: none;
-            z-index: 10;
-            line-height: 1;
-            transition: color 0.2s;
-        }
-        
-        .close-btn:hover, .close-btn:active {
-            color: var(--text-color);
-        }
-
-        /* --- LEARN AI SLIDESHOW --- */
+        /* --- LEARN AI MODAL --- */
         .modal {
             display: none;
             position: fixed;
@@ -137,11 +159,12 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.95);
+            background-color: rgba(5, 2, 18, 0.95);
             z-index: 100;
             justify-content: center;
             align-items: center;
             flex-direction: column;
+            padding: 20px;
         }
 
         .modal.active {
@@ -150,8 +173,8 @@
 
         .carousel-container {
             position: relative;
-            width: 90%;
-            height: 70%;
+            width: 100%;
+            max-width: 400px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -160,129 +183,179 @@
         .ad-link-wrapper {
             display: block;
             width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
 
         .carousel-img {
-            max-width: 100%;
-            max-height: 100%;
+            width: 100%;
+            height: auto;
+            max-height: 65vh;
             object-fit: contain;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(233, 69, 96, 0.3);
+            border-radius: 16px;
+            box-shadow: 0 0 35px rgba(157, 78, 221, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.1);
         }
 
         .carousel-btn {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background-color: rgba(233, 69, 96, 0.9);
-            color: white;
-            border: none;
-            width: 45px;
-            height: 45px;
-            font-size: 1.25rem;
+            background: rgba(10, 10, 22, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 12px 16px;
+            font-size: 1.2rem;
             cursor: pointer;
+            border-radius: 50%;
+            z-index: 110;
+        }
+
+        #prev-btn { left: -15px; }
+        #next-btn { right: -15px; }
+
+        .close-btn {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 110;
+            font-size: 1.5rem;
+            color: #fff;
+            cursor: pointer;
+            z-index: 120;
+            font-weight: bold;
         }
 
-        #prev-btn { left: 5px; }
-        #next-btn { right: 5px; }
+        /* --- MOBILE PERFECT PLAYING SCREEN --- */
+        #game-screen {
+            background: #060613;
+            justify-content: space-between;
+            padding: 30px 20px 40px 20px;
+        }
 
-        /* --- GAME SCREEN --- */
-        #game-header {
-            font-size: 1rem;
-            margin-bottom: 5px;
+        .game-top-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 360px;
+        }
+
+        .game-title {
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            color: #8a8a9e;
+            font-weight: 700;
+        }
+
+        .btn-close-game {
+            width: 36px;
+            height: 36px;
+            background: #16162e;
+            border: 1px solid #2a2a4e;
+            border-radius: 50%;
+            color: #8a8a9e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            cursor: pointer;
             font-weight: bold;
-            letter-spacing: 1px;
-            text-align: center;
         }
 
         #target-display {
-            font-size: 2.5rem;
-            color: var(--text-color);
-            font-weight: 800;
-            background: var(--panel-color);
-            padding: 2px 20px;
-            border-radius: 10px;
-            border: 2px solid var(--accent-color);
-            margin-bottom: 15px;
+            font-size: 4rem;
+            color: var(--neon-blue);
+            font-weight: 900;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+            margin: 10px 0;
         }
 
+        /* Responsive 8x6 Grid Engine */
         #grid {
             display: grid;
-            /* Adaptive mobile columns and rows sizing */
-            grid-template-columns: repeat(8, min(10vw, 45px));
-            grid-template-rows: repeat(6, min(10vw, 45px));
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(8, 1fr);
             gap: 6px;
-            background-color: var(--panel-color);
-            padding: 12px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            max-width: 100%;
+            width: 100%;
+            max-width: 360px;
+            height: 52vh; /* Locked fluid height specifically for mobile touch targets */
+            background-color: var(--panel-bg);
+            padding: 10px;
+            border-radius: 16px;
+            border: 1px solid #222244;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
         }
 
         .cell {
-            background-color: var(--accent-color);
-            border-radius: 5px;
+            background: linear-gradient(135deg, #1f1f42 0%, #13132e 100%);
+            border: 1px solid #2d2d5a;
+            border-radius: 8px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.2rem;
-            font-weight: bold;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #fff;
             cursor: pointer;
             user-select: none;
-            transition: background-color 0.1s;
         }
 
         .cell.correct {
-            background-color: var(--correct-color) !important;
+            background: var(--correct-green) !important;
+            color: #000;
+            border-color: var(--correct-green);
+            box-shadow: 0 0 15px var(--correct-green);
             pointer-events: none;
         }
 
         .cell.wrong {
-            background-color: var(--wrong-color) !important;
+            background: var(--wrong-red) !important;
+            color: #fff;
+            border-color: var(--wrong-red);
+            box-shadow: 0 0 15px var(--wrong-red);
             pointer-events: none;
         }
 
-        /* --- SCORE SCREEN & ANIMATION --- */
+        /* --- SCORE SCREEN --- */
         #score-screen {
-            background-color: rgba(26, 26, 46, 0.98);
-            z-index: 10;
+            background-color: #050212;
         }
 
         .score-container {
             text-align: center;
-            background: var(--panel-color);
-            padding: 30px 20px;
-            border-radius: 20px;
-            border: 2px solid var(--accent-color);
-            width: 85%;
-            max-width: 400px;
-            z-index: 11;
+            background: var(--panel-bg);
+            padding: 35px 25px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 90%;
+            max-width: 340px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .score-container h2 {
+            margin-top: 0;
+            font-size: 1.8rem;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        #speed-result {
+            font-size: 1rem;
+            color: #b0b0c6;
+            line-height: 1.4;
         }
 
         #star-rating {
             font-size: 3.5rem;
             color: #f1c40f;
             margin: 15px 0;
-            text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
-        }
-
-        .star-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
+            filter: drop-shadow(0 0 10px rgba(241, 196, 15, 0.6));
         }
 
         /* --- AD SCREEN --- */
@@ -290,33 +363,42 @@
             background-color: #000;
         }
 
-        #ad-screen .ad-link-wrapper {
-            width: 85%;
-            height: 70%;
-        }
-
         #ad-image {
-            max-width: 100%;
-            max-height: 100%;
+            width: 100%;
+            max-width: 360px;
+            height: auto;
+            max-height: 70vh;
             object-fit: contain;
-            border-radius: 10px;
-            box-shadow: 0 0 30px rgba(255,255,255,0.1);
+            border-radius: 12px;
         }
 
         .ad-timer {
             position: absolute;
-            bottom: 5%;
+            bottom: 40px;
             font-size: 1rem;
-            color: #888;
+            color: #6c6c84;
+            letter-spacing: 1px;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.03); }
         }
     </style>
 </head>
 <body>
 
+    <!-- Space Engine Canvas for Home Screen Background -->
+    <canvas id="space-canvas" class="bg-canvas"></canvas>
+
     <!-- Home Screen -->
     <div id="home-screen" class="screen active">
-        <h1>SPEED MATCH</h1>
-        <button class="btn" onclick="startGame()">START NOW!</button>
+        <div class="title-container">
+            <h1>Speed Match</h1>
+            <div class="subtitle">Mind Trainer</div>
+        </div>
+        
+        <button class="btn-play" onclick="startGame()">Start Now!</button>
         
         <div class="ai-box" onclick="openAiModal()">
             <svg class="ai-logo" viewBox="0 0 24 24">
@@ -331,46 +413,47 @@
         <span class="close-btn" onclick="closeAiModal()">&times;</span>
         <div class="carousel-container">
             <button class="carousel-btn" id="prev-btn" onclick="changeSlide(-1)">&#10094;</button>
-            
             <a href="https://wa.me/94712220206?text=Give%20me%20more%20details%20about%20FREE%20AI%20Webinar" target="_blank" class="ad-link-wrapper">
                 <img id="slideshow-image" class="carousel-img" src="webinar-ad1.png" alt="Learn AI Webinar" onerror="this.src='https://via.placeholder.com/600x400?text=Webinar+Ad+Placeholder'">
             </a>
-            
             <button class="carousel-btn" id="next-btn" onclick="changeSlide(1)">&#10095;</button>
         </div>
     </div>
 
-    <!-- Game Screen -->
+    <!-- Game Screen (8x6 Grid Matrix Layout) -->
     <div id="game-screen" class="screen">
-        <span class="close-btn" onclick="exitGame()">&times;</span>
-        <div id="game-header">FIND ALL THE NUMBERS BELOW:</div>
+        <div class="game-top-bar">
+            <span class="game-title">MATCH TARGET</span>
+            <div class="btn-close-game" onclick="quitToHome()">&times;</div>
+        </div>
         <div id="target-display">0</div>
         <div id="grid"></div>
+        <div style="height: 10px;"></div> <!-- visual spacer anchor -->
     </div>
 
     <!-- Score Screen -->
     <div id="score-screen" class="screen">
-        <canvas id="star-canvas" class="star-canvas"></canvas>
+        <canvas id="star-canvas" class="star-canvas bg-canvas"></canvas>
         <div class="score-container">
-            <h2>Round Complete!</h2>
-            <p id="speed-result">Average Recognition Speed: 0.00s</p>
+            <h2>Round Cleared!</h2>
+            <p id="speed-result">Average Recognition Speed:<br><strong>0.00s</strong> per item</p>
             <div id="star-rating">⭐⭐⭐</div>
-            <button class="btn" onclick="showAd()">NEXT</button>
+            <button class="btn-play" style="padding: 12px 40px; font-size: 1.1rem;" onclick="showAd()">Next</button>
         </div>
     </div>
 
     <!-- Ad Screen -->
     <div id="ad-screen" class="screen">
-        <a href="https://wa.me/94712220206?text=Give%20me%20more%20details%20about%20FREE%20AI%20Webinar" target="_blank" class="ad-link-wrapper">
+        <a href="https://wa.me/94712220206?text=Give%20me%20more%20details%20about%20FREE%20AI%20Webinar" target="_blank" class="ad-link-wrapper" style="text-align: center;">
             <img id="ad-image" src="webinar-ad1.png" alt="Webinar Advertisement" onerror="this.src='https://via.placeholder.com/600x400?text=Webinar+Ad+Placeholder'">
         </a>
-        <div class="ad-timer">Next level starts in <span id="countdown">5</span>s...</div>
+        <div class="ad-timer">Next round loads in <span id="countdown">5</span>s...</div>
     </div>
 
     <script>
-        // Game Configuration Updated to 6x8
-        const ROWS = 6;
-        const COLS = 8;
+        // Game Matrix Configuration Adjusted to 8x6 (48 Total Cells)
+        const ROWS = 8;
+        const COLS = 6;
         const TOTAL_CELLS = ROWS * COLS;
         const MIN_TARGET_PERCENT = 0.25; 
 
@@ -378,23 +461,118 @@
         let currentAdIndex = 0; 
         let levelAdIndex = 0;   
 
-        let currentLevel = 1;
         let targetNumber = 0;
         let totalTargetsCount = 0;
         let foundTargetsCount = 0;
         let startTime = 0;
-        let activeAdTimeout = null;
-        let activeAdInterval = null;
         
-        let canvas, ctx, stars = [];
-        let animationId;
+        // Background System Variables
+        let spaceCanvas, spaceCtx, spaceAnimationId;
+        let starCanvas, starCtx, starAnimationId;
+        let elements = [];
 
+        // Run space engine on initial load
+        window.addEventListener('DOMContentLoaded', () => {
+            initSpaceBackground();
+        });
+
+        // Navigation Controllers
         function changeScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
+            
+            // Manage rendering lifecycles of background loop contexts 
+            cancelAnimationFrame(spaceAnimationId);
+            cancelAnimationFrame(starAnimationId);
+
+            if (screenId === 'home-screen') {
+                initSpaceBackground();
+            }
         }
 
-        // Learn AI Modal Carousel Logic
+        function quitToHome() {
+            if(confirm("Quit current run and return to home menu?")) {
+                changeScreen('home-screen');
+            }
+        }
+
+        /* --- HOME SCREEN ANIMATION ENGINE (STARS & COMETS) --- */
+        function initSpaceBackground() {
+            spaceCanvas = document.getElementById('space-canvas');
+            spaceCtx = spaceCanvas.getContext('2d');
+            resizeCanvas(spaceCanvas);
+
+            elements = [];
+            // Generate Ambient Stars
+            for(let i = 0; i < 60; i++) {
+                elements.push({
+                    type: 'star',
+                    x: Math.random() * spaceCanvas.width,
+                    y: Math.random() * spaceCanvas.height,
+                    size: Math.random() * 2,
+                    alpha: Math.random(),
+                    speed: Math.random() * 0.02 + 0.005
+                });
+            }
+            // Generate Dynamic Comets
+            for(let i = 0; i < 3; i++) {
+                generateComet();
+            }
+            animateSpace();
+        }
+
+        function generateComet() {
+            elements.push({
+                type: 'comet',
+                x: Math.random() * spaceCanvas.width * 0.8,
+                y: Math.random() * -spaceCanvas.height * 0.5,
+                length: Math.random() * 80 + 40,
+                speedX: Math.random() * 4 + 3,
+                speedY: Math.random() * 4 + 3,
+                size: Math.random() * 2 + 1
+            });
+        }
+
+        function animateSpace() {
+            spaceCtx.clearRect(0, 0, spaceCanvas.width, spaceCanvas.height);
+            
+            elements.forEach((el, index) => {
+                if (el.type === 'star') {
+                    // Twinkle mapping
+                    el.alpha += el.speed;
+                    if(el.alpha > 1 || el.alpha < 0) el.speed = -el.speed;
+                    spaceCtx.fillStyle = `rgba(255, 255, 255, ${Math.abs(el.alpha)})`;
+                    spaceCtx.fillRect(el.x, el.y, el.size, el.size);
+                } 
+                else if (el.type === 'comet') {
+                    // Render falling comets with glowing gradient tails
+                    let gradient = spaceCtx.createLinearGradient(el.x, el.y, el.x - el.length, el.y - el.length);
+                    gradient.addColorStop(0, 'rgba(0, 240, 255, 1)');
+                    gradient.addColorStop(0.1, 'rgba(255, 42, 116, 0.6)');
+                    gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                    
+                    spaceCtx.strokeStyle = gradient;
+                    spaceCtx.lineWidth = el.size;
+                    spaceCtx.beginPath();
+                    spaceCtx.moveTo(el.x, el.y);
+                    spaceCtx.lineTo(el.x - el.length, el.y - el.length);
+                    spaceCtx.stroke();
+
+                    // Physics update
+                    el.x += el.speedX;
+                    el.y += el.speedY;
+
+                    // Recycle if bounds exceeded
+                    if (el.y > spaceCanvas.height || el.x > spaceCanvas.width) {
+                        elements.splice(index, 1);
+                        generateComet();
+                    }
+                }
+            });
+            spaceAnimationId = requestAnimationFrame(animateSpace);
+        }
+
+        /* --- CAROUSEL SLIDESHOW MODAL --- */
         function openAiModal() {
             currentAdIndex = 0;
             updateSlideshowImage();
@@ -407,31 +585,19 @@
 
         function changeSlide(direction) {
             currentAdIndex += direction;
-            if (currentAdIndex >= adImages.length) {
-                currentAdIndex = 0; 
-            } else if (currentAdIndex < 0) {
-                currentAdIndex = adImages.length - 1; 
-            }
+            if (currentAdIndex >= adImages.length) currentAdIndex = 0;
+            else if (currentAdIndex < 0) currentAdIndex = adImages.length - 1;
             updateSlideshowImage();
         }
 
         function updateSlideshowImage() {
-            const imgElement = document.getElementById('slideshow-image');
-            imgElement.src = adImages[currentAdIndex];
+            document.getElementById('slideshow-image').src = adImages[currentAdIndex];
         }
 
-        // Game Navigation and Play Logic
+        /* --- ACTIVE GAME PLAY ENGINE --- */
         function startGame() {
             changeScreen('game-screen');
             setupLevel();
-        }
-
-        function exitGame() {
-            // Stops background routines and exits safely to the main menu
-            cancelAnimationFrame(animationId);
-            clearInterval(activeAdInterval);
-            clearTimeout(activeAdTimeout);
-            changeScreen('home-screen');
         }
 
         function setupLevel() {
@@ -442,8 +608,7 @@
             targetNumber = Math.floor(Math.random() * 9) + 1; 
             document.getElementById('target-display').textContent = targetNumber;
 
-            // Compute target counts based on the updated 48-cell block setup
-            const minTargets = Math.ceil(TOTAL_CELLS * MIN_TARGET_PERCENT); // 25% of 48 = 12 minimum cells
+            const minTargets = Math.ceil(TOTAL_CELLS * MIN_TARGET_PERCENT); // 25% of 48 = 12 cells min
             const actualTargetsCount = minTargets + Math.floor(Math.random() * 6); 
             totalTargetsCount = actualTargetsCount;
 
@@ -458,18 +623,20 @@
                 }
             }
 
+            // Shuffle Matrix Values
             for (let i = cellValues.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [cellValues[i], cellValues[j]] = [cellValues[j], cellValues[i]];
             }
 
+            // Generate DOM Node Elements
             cellValues.forEach(value => {
                 const cell = document.createElement('div');
                 cell.classList.add('cell');
                 cell.textContent = value;
                 
                 cell.addEventListener('click', function handleCellClick() {
-                    cell.style.pointerEvents = 'none'; 
+                    cell.style.pointerEvents = 'none'; // Lock out further interaction immediately
                     
                     if (value === targetNumber) {
                         cell.classList.add('correct');
@@ -496,77 +663,70 @@
 
         function displayScore(avgSpeed) {
             changeScreen('score-screen');
-            document.getElementById('speed-result').textContent = `Average Recognition Speed: ${avgSpeed.toFixed(2)}s per item`;
+            document.getElementById('speed-result').innerHTML = `Average Recognition Speed:<br><strong>${avgSpeed.toFixed(2)}s</strong> per item`;
             
             let starsMarkup = '⭐';
-            if (avgSpeed < 0.8) {
-                starsMarkup = '⭐⭐⭐';
-            } else if (avgSpeed < 1.5) {
-                starsMarkup = '⭐⭐';
-            }
+            if (avgSpeed < 0.9) starsMarkup = '⭐⭐⭐';
+            else if (avgSpeed < 1.6) starsMarkup = '⭐⭐';
+            
             document.getElementById('star-rating').textContent = starsMarkup;
-
-            initStarAnimation();
+            initStarFallAnimation();
         }
 
-        // Star Engine Canvas
-        function initStarAnimation() {
-            canvas = document.getElementById('star-canvas');
-            ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        /* --- SCORE STAGE CELEBRATION FALLING STARS ENGINE --- */
+        function initStarFallAnimation() {
+            starCanvas = document.getElementById('star-canvas');
+            starCtx = starCanvas.getContext('2d');
+            resizeCanvas(starCanvas);
 
-            stars = [];
-            for (let i = 0; i < 30; i++) {
-                stars.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * -canvas.height,
-                    size: Math.random() * 12 + 8,
-                    speed: Math.random() * 3 + 2,
+            elements = [];
+            for (let i = 0; i < 35; i++) {
+                elements.push({
+                    x: Math.random() * starCanvas.width,
+                    y: Math.random() * -starCanvas.height,
+                    size: Math.random() * 12 + 10,
+                    speed: Math.random() * 4 + 2,
                     angle: Math.random() * 360
                 });
             }
-            animateStars();
+            animateFallingStars();
         }
 
-        function animateStars() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#f1c40f';
-            let elementsStillFalling = false;
+        function animateFallingStars() {
+            starCtx.clearRect(0, 0, starCanvas.width, starCanvas.height);
+            starCtx.fillStyle = '#f1c40f';
+            let activeAnimationTracks = false;
 
-            stars.forEach(star => {
-                ctx.save();
-                ctx.translate(star.x, star.y);
-                ctx.rotate((star.angle * Math.PI) / 180);
+            elements.forEach(star => {
+                starCtx.save();
+                starCtx.translate(star.x, star.y);
+                starCtx.rotate((star.angle * Math.PI) / 180);
                 
-                ctx.beginPath();
+                starCtx.beginPath();
                 for (let i = 0; i < 5; i++) {
-                    ctx.lineTo(Math.cos((18 + i * 72) * Math.PI / 180) * star.size, Math.sin((18 + i * 72) * Math.PI / 180) * star.size);
-                    ctx.lineTo(Math.cos((54 + i * 72) * Math.PI / 180) * (star.size/2), Math.sin((54 + i * 72) * Math.PI / 180) * (star.size/2));
+                    starCtx.lineTo(Math.cos((18 + i * 72) * Math.PI / 180) * star.size, Math.sin((18 + i * 72) * Math.PI / 180) * star.size);
+                    starCtx.lineTo(Math.cos((54 + i * 72) * Math.PI / 180) * (star.size/2), Math.sin((54 + i * 72) * Math.PI / 180) * (star.size/2));
                 }
-                ctx.closePath();
-                ctx.fill();
-                ctx.restore();
+                starCtx.closePath();
+                starCtx.fill();
+                starCtx.restore();
 
                 star.y += star.speed;
-                star.angle += 1;
+                star.angle += 1.5;
 
-                if (star.y < canvas.height + 20) {
-                    elementsStillFalling = true;
-                }
+                if (star.y < starCanvas.height + 20) activeAnimationTracks = true;
             });
 
-            if (elementsStillFalling) {
-                animationId = requestAnimationFrame(animateStars);
+            if (activeAnimationTracks) {
+                starAnimationId = requestAnimationFrame(animateFallingStars);
             }
         }
 
-        // Ad Transitions
+        /* --- ADVERTISING BREAK PROCESSOR --- */
         function showAd() {
-            cancelAnimationFrame(animationId); 
-            
             const adImgElement = document.getElementById('ad-image');
             adImgElement.src = adImages[levelAdIndex];
+            
             levelAdIndex = (levelAdIndex + 1) % adImages.length; 
 
             changeScreen('ad-screen');
@@ -575,25 +735,27 @@
             const timerDisplay = document.getElementById('countdown');
             timerDisplay.textContent = timeLeft;
 
-            activeAdInterval = setInterval(() => {
+            const interval = setInterval(() => {
                 timeLeft--;
                 timerDisplay.textContent = timeLeft;
                 if(timeLeft <= 0) {
-                    clearInterval(activeAdInterval);
-                    nextLevel();
+                    clearInterval(interval);
+                    startGame(); // directly resets loop state variables inside setupLevel execution
                 }
             }, 1000);
         }
 
-        function nextLevel() {
-            currentLevel++;
-            startGame();
+        function resizeCanvas(canvasTarget) {
+            canvasTarget.width = window.innerWidth;
+            canvasTarget.height = window.innerHeight;
         }
 
         window.addEventListener('resize', () => {
-            if (canvas && document.getElementById('score-screen').classList.contains('active')) {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
+            let activeScreen = document.querySelector('.screen.active');
+            if (activeScreen && activeScreen.id === 'home-screen' && spaceCanvas) {
+                resizeCanvas(spaceCanvas);
+            } else if (activeScreen && activeScreen.id === 'score-screen' && starCanvas) {
+                resizeCanvas(starCanvas);
             }
         });
     </script>
