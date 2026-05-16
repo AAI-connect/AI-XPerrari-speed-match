@@ -3,622 +3,569 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IQ Grid - Powered by Gen-AI Xperrari</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <!-- Html2Canvas for downloading the result box as an image -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    
+    <title>Speed Match Game</title>
     <style>
         :root {
-            --bg-color: #0d0d0d;
-            --primary-yellow: #f1c40f;
-            --dark-yellow: #d4ac0d;
-            --text-white: #ffffff;
-            --card-bg: #1a1a1a;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+            --bg-color: #1a1a2e;
+            --panel-color: #16213e;
+            --accent-color: #0f3460;
+            --text-color: #e94560;
+            --light-text: #ffffff;
+            --correct-color: #4cd137;
+            --wrong-color: #e84118;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-white);
-            height: 100vh;
+            color: var(--light-text);
             display: flex;
             justify-content: center;
             align-items: center;
+            height: 100vh;
             overflow: hidden;
         }
 
         .screen {
-            display: none; 
-            width: 100%;
-            max-width: 500px;
-            height: 90vh;
-            padding: 20px;
+            display: none;
             flex-direction: column;
-            justify-content: space-between;
             align-items: center;
-            text-align: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
             position: absolute;
+            top: 0;
+            left: 0;
         }
 
-        .screen.active { 
-            display: flex !important; 
+        .active {
+            display: flex;
         }
 
-        .glow-text {
-            font-family: 'Orbitron', sans-serif;
-            color: var(--primary-yellow);
-            text-shadow: 0 0 10px rgba(241, 196, 15, 0.7), 0 0 20px rgba(241, 196, 15, 0.5);
+        /* --- HOME SCREEN --- */
+        #home-screen {
+            background: linear-gradient(135deg, var(--bg-color), var(--panel-color));
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            color: var(--text-color);
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
             letter-spacing: 2px;
         }
 
-        .btn-main {
-            font-family: 'Orbitron', sans-serif;
-            background-color: var(--primary-yellow);
-            color: #000;
-            border: none;
+        .btn {
             padding: 15px 40px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--light-text);
+            background-color: var(--text-color);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4);
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(233, 69, 96, 0.6);
+        }
+
+        .ai-box {
+            position: absolute;
+            bottom: 40px;
+            background-color: var(--panel-color);
+            border: 2px solid var(--accent-color);
+            padding: 12px 25px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .ai-box:hover {
+            background-color: var(--accent-color);
+        }
+
+        .ai-logo {
+            width: 30px;
+            height: 30px;
+            fill: var(--text-color);
+        }
+
+        .ai-text {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* --- LEARN AI SLIDESHOW WINDOW --- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .carousel-container {
+            position: relative;
+            max-width: 80%;
+            max-height: 70%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ad-link-wrapper {
+            display: block;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .ad-link-wrapper:hover {
+            transform: scale(1.02);
+        }
+
+        .carousel-img {
+            max-width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(233, 69, 96, 0.3);
+        }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(233, 69, 96, 0.8);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+            z-index: 110;
+        }
+
+        .carousel-btn:hover {
+            background-color: rgba(233, 69, 96, 1);
+        }
+
+        #prev-btn { left: -70px; }
+        #next-btn { right: -70px; }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 3rem;
+            color: white;
+            cursor: pointer;
+            transition: color 0.2s;
+            z-index: 110;
+        }
+        .close-modal:hover { color: var(--text-color); }
+
+        /* --- GAME SCREEN --- */
+        #game-header {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        #target-display {
+            font-size: 3rem;
+            color: var(--text-color);
+            font-weight: 800;
+            background: var(--panel-color);
+            padding: 5px 25px;
+            border-radius: 10px;
+            border: 2px solid var(--accent-color);
+            margin-bottom: 20px;
+        }
+
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(10, 50px);
+            grid-template-rows: repeat(7, 50px);
+            gap: 8px;
+            background-color: var(--panel-color);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .cell {
+            background-color: var(--accent-color);
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-size: 1.3rem;
             font-weight: bold;
             cursor: pointer;
-            border-radius: 30px;
-            box-shadow: 0 5px 15px rgba(241, 196, 15, 0.4);
-            transition: all 0.2s ease;
-            width: 80%;
-            max-width: 300px;
-        }
-        .btn-main:hover {
-            transform: scale(1.05);
-            background-color: var(--dark-yellow);
+            user-select: none;
+            transition: background-color 0.1s;
         }
 
-        .btn-sub {
-            font-family: 'Orbitron', sans-serif;
-            background-color: transparent;
-            color: var(--primary-yellow);
-            border: 2px solid var(--primary-yellow);
-            padding: 12px 30px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 30px;
-            transition: all 0.2s ease;
-            width: 80%;
-            max-width: 300px;
-            margin-top: 15px;
-        }
-        .btn-sub:hover {
-            background-color: rgba(241, 196, 15, 0.1);
+        .cell.correct {
+            background-color: var(--correct-color) !important;
+            pointer-events: none;
         }
 
-        #welcome-screen h1 {
-            font-size: 3rem;
-            margin-top: 15%;
-        }
-        #welcome-screen p {
-            font-size: 1.1rem;
-            color: #888;
+        .cell.wrong {
+            background-color: var(--wrong-color) !important;
+            pointer-events: none;
         }
 
-        #countdown-screen {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 6rem;
-            justify-content: center;
-            color: var(--primary-yellow);
-        }
-
-        #game-screen {
-            justify-content: flex-start;
-            gap: 15px;
-        }
-        .game-header {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        .btn-close {
-            background: transparent;
-            border: 2px solid #ff4d4d;
-            color: #ff4d4d;
-            font-size: 1rem;
-            font-weight: bold;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-        .btn-close:hover {
-            background: #ff4d4d;
-            color: #000;
-        }
-        
-        .timer-container {
-            width: 40px;
-            height: 40px;
-            position: relative;
-            background: #222;
-            border: 2px solid var(--primary-yellow);
-            border-radius: 5px;
-            overflow: hidden;
-        }
-        .sand-fill {
-            width: 100%;
-            height: 100%;
-            background-color: var(--primary-yellow);
-            position: absolute;
-            bottom: 0;
-            transition: height 1s linear;
-        }
-
-        .image-container {
-            width: 100%;
-            height: 220px;
-            border-radius: 15px;
-            border: 3px solid #333;
-            background-size: cover;
-            background-position: center;
-            background-color: #222;
-            transition: border-color 0.3s ease;
-        }
-
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            width: 100%;
-            margin-top: 10px;
-        }
-        .option-card {
-            background-color: var(--card-bg);
-            border: 2px solid #333;
-            padding: 15px 10px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            word-wrap: break-word;
-        }
-        .option-card.selected {
-            border-color: var(--primary-yellow);
-            background-color: rgba(241, 196, 15, 0.1);
-        }
-
-        .feedback-label {
-            height: 30px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-top: 5px;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-        .feedback-correct { color: #2ecc71; opacity: 1; }
-        .feedback-wrong { color: #e74c3c; opacity: 1; }
-
-        #ad-screen {
-            background-color: #111;
-            border: 4px dashed var(--primary-yellow);
-            border-radius: 20px;
-            justify-content: center;
-            gap: 20px;
-        }
-        
-        .ad-link-wrapper {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        
-        .progress-bar-container {
-            width: 80%;
-            height: 10px;
-            background-color: #333;
-            border-radius: 5px;
-            overflow: hidden;
-            margin-top: 20px;
-            position: relative;
-        }
-        .progress-bar-fill {
-            height: 100%;
-            width: 0%;
-            background-color: var(--primary-yellow);
-        }
-
-        #gallery-screen {
-            justify-content: center;
-            gap: 20px;
-        }
-        .slider-container {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
-        }
-        .slider-img {
-            width: 100%;
-            max-height: 350px;
-            border-radius: 15px;
-            border: 3px solid var(--primary-yellow);
-            object-fit: contain;
-            background-color: #111;
-        }
-        .slider-arrow {
-            background: var(--primary-yellow);
-            color: #000;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        /* --- SCORE SCREEN & ANIMATION --- */
+        #score-screen {
+            background-color: rgba(26, 26, 46, 0.95);
             z-index: 10;
         }
-        .slider-arrow:hover {
-            background: var(--dark-yellow);
+
+        .score-container {
+            text-align: center;
+            background: var(--panel-color);
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid var(--accent-color);
+            z-index: 11;
         }
 
-        #result-screen {
-            justify-content: center;
-            gap: 25px;
+        #star-rating {
+            font-size: 4rem;
+            color: #f1c40f;
+            margin: 20px 0;
+            text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
         }
-        .result-box {
-            background: linear-gradient(145deg, #1f1f1f, #0d0d0d);
-            border: 3px solid var(--primary-yellow);
-            padding: 40px 30px;
-            border-radius: 20px;
-            width: 90%;
-            box-shadow: 0 15px 30px rgba(241, 196, 15, 0.15);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
+
+        .star-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
         }
-        .iq-score {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.2rem;
-            color: #fff;
-            margin: 15px 0;
+
+        /* --- AD SCREEN --- */
+        #ad-screen {
+            background-color: #000;
         }
-        .btn-download {
-            background-color: transparent;
-            color: var(--primary-yellow);
-            border: 2px solid var(--primary-yellow);
-            padding: 10px 25px;
-            font-size: 1rem;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
+
+        #ad-image {
+            max-width: 80%;
+            max-height: 80%;
+            object-fit: contain;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(255,255,255,0.2);
         }
-        .btn-download:hover {
-            background-color: var(--primary-yellow);
-            color: #000;
+
+        .ad-timer {
+            position: absolute;
+            bottom: 30px;
+            font-size: 1.2rem;
+            color: #888;
         }
     </style>
 </head>
 <body>
 
-    <!-- SCREEN 1: WELCOME SCREEN -->
-    <div id="welcome-screen" class="screen active">
-        <div>
-            <h1 class="glow-text">IQ GRID</h1>
-            <p style="margin-top: 15px;">Let's play and get your IQ level tested.</p>
-        </div>
+    <!-- Home Screen -->
+    <div id="home-screen" class="screen active">
+        <h1>SPEED MATCH</h1>
+        <button class="btn" onclick="startGame()">START NOW!</button>
         
-        <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
-            <button class="btn-main" onclick="startCountdown()">GO</button>
-            <button class="btn-sub" onclick="openGallery()">AI Learning (Ads)</button>
-        </div>
-
-        <div class="glow-text" style="font-size: 0.8rem; margin-bottom: 20px;">Powered by Gen-AI Xperrari</div>
-    </div>
-
-    <!-- SCREEN 2: COUNTDOWN SCREEN -->
-    <div id="countdown-screen" class="screen">3</div>
-
-    <!-- SCREEN 3: GAME SCREEN -->
-    <div id="game-screen" class="screen">
-        <div class="game-header">
-            <div>Level: <span id="current-level-txt">1</span>/20</div>
-            <div class="timer-container">
-                <div id="sand-clock" class="sand-fill"></div>
-            </div>
-            <button class="btn-close" onclick="exitToHome()">X</button>
-        </div>
-
-        <div id="game-image" class="image-container"></div>
-        <div id="feedback-msg" class="feedback-label"></div>
-
-        <div class="options-grid">
-            <div class="option-card" onclick="selectOption(0)" id="opt0">Option 1</div>
-            <div class="option-card" onclick="selectOption(1)" id="opt1">Option 2</div>
-            <div class="option-card" onclick="selectOption(2)" id="opt2">Option 3</div>
-            <div class="option-card" onclick="selectOption(3)" id="opt3">Option 4</div>
-        </div>
-
-        <button class="btn-main" id="confirm-btn" onclick="commitAnswer()" style="margin-top: 15px; font-size: 1.1rem; padding: 10px 30px;">CONFIRM</button>
-        <div class="glow-text" style="font-size: 0.7rem; margin-top: auto;">Powered by Gen-AI Xperrari</div>
-    </div>
-
-    <!-- SCREEN 4: AD BREAK SCREEN -->
-    <div id="ad-screen" class="screen">
-        <div style="font-size: 0.8rem; text-transform: uppercase; color: #666; letter-spacing: 2px;">Sponsored Announcement</div>
-        
-        <!-- Clickable Wrap targeting WhatsApp with pre-filled message variables -->
-        <a href="https://wa.me/94712220206?text=Give%20me%20more%20details%20about%20FREE%20AI%20Webinar" target="_blank" class="ad-link-wrapper">
-            <img id="ad-image-placeholder" src="webinar-ad1.png" alt="Webinar Ad" style="width: 90%; max-height: 250px; border-radius: 10px; object-fit: contain;">
-        </a>
-        
-        <div class="progress-bar-container">
-            <div id="ad-progress" class="progress-bar-fill"></div>
+        <div class="ai-box" onclick="openAiModal()">
+            <svg class="ai-logo" viewBox="0 0 24 24">
+                <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M9,7A2,2 0 0,1 11,9A2,2 0 0,1 9,11A2,2 0 0,1 7,9A2,2 0 0,1 9,7M15,7A2,2 0 0,1 17,9A2,2 0 0,1 15,11A2,2 0 0,1 13,9A2,2 0 0,1 15,7M7,14H17V18H7V14Z"/>
+            </svg>
+            <span class="ai-text">Learn AI</span>
         </div>
     </div>
 
-    <!-- SCREEN 5: AI LEARNING GALLERY -->
-    <div id="gallery-screen" class="screen">
-        <h2 class="glow-text" style="font-size: 1.8rem;">AI Learning Gallery</h2>
-        <div class="slider-container">
-            <button class="slider-arrow" onclick="slideAd(-1)">◀</button>
+    <!-- Learn AI Modal Window (Slideshow) -->
+    <div id="ai-modal" class="modal">
+        <span class="close-modal" onclick="closeAiModal()">&times;</span>
+        <div class="carousel-container">
+            <button class="carousel-btn" id="prev-btn" onclick="changeSlide(-1)">&#10094;</button>
             
-            <!-- Clickable Wrap targeting WhatsApp with pre-filled message variables -->
-            <a href="https://wa.me/94712220206?text=Give%20me%20more%20details%20about%20FREE%20AI%20Webinar" target="_blank" class="ad-link-wrapper" style="width: 70%;">
-                <img id="gallery-img-placeholder" src="webinar-ad1.png" alt="Gallery Ad" class="slider-img">
+            <!-- WhatsApp Link wrapper for slideshow -->
+            <a href="https://wa.me/94712220206?text=Give%20me%20more%20details%20about%20FREE%20AI%20Webinar" target="_blank" class="ad-link-wrapper">
+                <img id="slideshow-image" class="carousel-img" src="webinar-ad1.png" alt="Learn AI Webinar" onerror="this.src='https://via.placeholder.com/600x400?text=Webinar+Ad+Placeholder'">
             </a>
             
-            <button class="slider-arrow" onclick="slideAd(1)">▶</button>
+            <button class="carousel-btn" id="next-btn" onclick="changeSlide(1)">&#10095;</button>
         </div>
-        <button class="btn-sub" onclick="exitToHome()" style="margin-top: 10px;">Back to Home</button>
-        <div class="glow-text" style="font-size: 0.7rem;">Powered by Gen-AI Xperrari</div>
     </div>
 
-    <!-- SCREEN 6: RESULTS SCREEN -->
-    <div id="result-screen" class="screen">
-        <div class="result-box" id="downloadable-card">
-            <h2 class="glow-text" style="font-size: 1.8rem;">OFFICIAL RESULT</h2>
-            <div style="width: 60px; height: 2px; background-color: var(--primary-yellow);"></div>
-            <div class="iq-score">YOUR IQ Level: <span id="final-iq-score" style="color: var(--primary-yellow);">0</span>/100</div>
-            <div class="glow-text" style="font-size: 0.75rem; color: #888;">Powered by GEN-AI Xperrari</div>
+    <!-- Game Screen -->
+    <div id="game-screen" class="screen">
+        <div id="game-header">FIND ALL THE NUMBERS BELOW:</div>
+        <div id="target-display">0</div>
+        <div id="grid"></div>
+    </div>
+
+    <!-- Score Screen -->
+    <div id="score-screen" class="screen">
+        <canvas id="star-canvas" class="star-canvas"></canvas>
+        <div class="score-container">
+            <h2>Round Complete!</h2>
+            <p id="speed-result">Average Recognition Speed: 0.00s</p>
+            <div id="star-rating">⭐⭐⭐</div>
+            <button class="btn" onclick="showAd()">NEXT</button>
         </div>
-        <button class="btn-download" onclick="downloadResultImage()">📥 Download Result Card</button>
-        <button class="btn-sub" onclick="exitToHome()">Play Again</button>
+    </div>
+
+    <!-- Ad Screen -->
+    <div id="ad-screen" class="screen">
+        <!-- WhatsApp Link wrapper for gameplay mid-level ad break -->
+        <a href="https://wa.me/94712220206?text=Give%20me%20more%20details%20about%20FREE%20AI%20Webinar" target="_blank" class="ad-link-wrapper">
+            <img id="ad-image" src="webinar-ad1.png" alt="Webinar Advertisement" onerror="this.src='https://via.placeholder.com/600x400?text=Webinar+Ad+Placeholder'">
+        </a>
+        <div class="ad-timer">Next level starts in <span id="countdown">5</span>s...</div>
     </div>
 
     <script>
-        const gameData = [
-            { img: "https://images.unsplash.com/photo-1507668077129-56e32842fceb?w=500", opts: ["Quantum", "Ecology", "Fossil", "Acoustics"], correct: 0 }, 
-            { img: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=500", opts: ["Bio-Tech", "Automation", "Manual", "Analog"], correct: 1 }, 
-            { img: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=500", opts: ["Inflation", "Bear Market", "Stock Index", "Deflation"], correct: 2 }, 
-            { img: "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=500", opts: ["Festival", "Artifact", "Folklore", "Heritage"], correct: 3 }, 
-            { img: "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?w=500", opts: ["Crypto", "Barter", "Fiat Currency", "Bond"], correct: 0 }, 
-            { img: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=500", opts: ["Zodiac", "Nebula", "Constellation", "Horoscope"], correct: 2 }, 
-            { img: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=500", opts: ["Chemistry", "Geology", "Botany", "Meteorology"], correct: 0 }, 
-            { img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=500", opts: ["Hardware", "Cyber System", "Server Hack", "Database"], correct: 1 }, 
-            { img: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=500", opts: ["Forex", "Trade Deficit", "GDP Yield", "Fiscal Year"], correct: 0 }, 
-            { img: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=500", opts: ["Sculpture", "Expressionism", "Fine Art", "Calligraphy"], correct: 2 }, 
-            { img: "https://images.unsplash.com/photo-1565514020179-026b92b84bb6?w=500", opts: ["Capital", "Digital Token", "Liquidity", "Bullion"], correct: 3 }, 
-            { img: "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=500", opts: ["Cosmology", "Solstice", "Eclipse", "Galaxy Cluster"], correct: 0 }, 
-            { img: "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?w=500", opts: ["Neural Net", "Cybernetics", "Encryption", "Optics"], correct: 2 }, 
-            { img: "https://images.unsplash.com/photo-1521898284481-a5ec348cb555?w=500", opts: ["Microeconomics", "Real Estate", "Commerce", "Auditing"], correct: 1 }, 
-            { img: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=500", opts: ["Carnival", "Symphony", "Tribal Ritual", "Theatre"], correct: 0 }, 
-            { img: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500", opts: ["Tax Rate", "Investment", "Revenue Stream", "Portfolio"], correct: 3 }, 
-            { img: "https://images.unsplash.com/photo-1502134249126-9f3755a50d78?w=500", opts: ["Asteroid", "Supernova", "Celestial Map", "Lunar Phase"], correct: 2 }, 
-            { img: "https://images.unsplash.com/photo-1518152006812-edab29b069ac?w=500", opts: ["Thermodynamics", "Particle Physics", "Astrophysics", "Kinematics"], correct: 1 }, 
-            { img: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500", opts: ["Machine Vision", "AI Android", "Data Synthesis", "Augmentation"], correct: 1 }, 
-            { img: "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?w=500", opts: ["Exhibition", "Socio-Culture", "Avant-Garde", "Customs"], correct: 2 }  
-        ];
+        // Game Configuration
+        const ROWS = 7;
+        const COLS = 10;
+        const TOTAL_CELLS = ROWS * COLS;
+        const MIN_TARGET_PERCENT = 0.25; 
 
-        let currentLevel = 0;
-        let score = 0;
-        let selectedAnswerIdx = null;
-        let timerInterval = null;
-        let remainingSeconds = 10;
-        let adCounter = 1; 
-        let galleryCounter = 1; 
-        let isAdBreakActive = false; 
+        // Ad Image Array
+        const adImages = ["webinar-ad1.png", "webinar-ad2.png", "webinar-ad3.png", "webinar-ad4.png"];
+        let currentAdIndex = 0; 
+        let levelAdIndex = 0;   
 
-        function showScreen(screenId) {
+        let currentLevel = 1;
+        let targetNumber = 0;
+        let totalTargetsCount = 0;
+        let foundTargetsCount = 0;
+        let startTime = 0;
+        
+        let canvas, ctx, stars = [];
+        let animationId;
+
+        // Screen Handling
+        function changeScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
         }
 
-        function exitToHome() {
-            clearInterval(timerInterval); 
-            currentLevel = 0;
-            score = 0;
-            selectedAnswerIdx = null;
-            isAdBreakActive = false;
-            showScreen('welcome-screen');
+        // Learn AI Slideshow Modal Logic
+        function openAiModal() {
+            currentAdIndex = 0;
+            updateSlideshowImage();
+            document.getElementById('ai-modal').classList.add('active');
         }
 
-        function openGallery() {
-            galleryCounter = 1;
-            updateGalleryImage();
-            showScreen('gallery-screen');
+        function closeAiModal() {
+            document.getElementById('ai-modal').classList.remove('active');
         }
 
-        function slideAd(direction) {
-            galleryCounter += direction;
-            if (galleryCounter > 4) galleryCounter = 1;
-            if (galleryCounter < 1) galleryCounter = 4;
-            updateGalleryImage();
+        function changeSlide(direction) {
+            currentAdIndex += direction;
+            if (currentAdIndex >= adImages.length) {
+                currentAdIndex = 0; 
+            } else if (currentAdIndex < 0) {
+                currentAdIndex = adImages.length - 1; 
+            }
+            updateSlideshowImage();
         }
 
-        function updateGalleryImage() {
-            const galleryImg = document.getElementById('gallery-img-placeholder');
-            galleryImg.src = `webinar-ad${galleryCounter}.png?t=${new Date().getTime()}`;
+        function updateSlideshowImage() {
+            const imgElement = document.getElementById('slideshow-image');
+            imgElement.src = adImages[currentAdIndex];
         }
 
-        function startCountdown() {
-            showScreen('countdown-screen');
-            let count = 3;
-            const cdScreen = document.getElementById('countdown-screen');
-            cdScreen.innerText = count;
+        // Game Setup
+        function startGame() {
+            changeScreen('game-screen');
+            setupLevel();
+        }
 
-            let countdownInterval = setInterval(() => {
-                count--;
-                if (count > 0) {
-                    cdScreen.innerText = count;
-                } else {
-                    clearInterval(countdownInterval);
-                    loadGameLevel();
+        function setupLevel() {
+            const gridElement = document.getElementById('grid');
+            gridElement.innerHTML = ''; 
+            foundTargetsCount = 0;
+
+            targetNumber = Math.floor(Math.random() * 9) + 1; 
+            document.getElementById('target-display').textContent = targetNumber;
+
+            const minTargets = Math.ceil(TOTAL_CELLS * MIN_TARGET_PERCENT);
+            const actualTargetsCount = minTargets + Math.floor(Math.random() * 10); 
+            totalTargetsCount = actualTargetsCount;
+
+            let cellValues = [];
+            for(let i = 0; i < actualTargetsCount; i++) {
+                cellValues.push(targetNumber);
+            }
+            while(cellValues.length < TOTAL_CELLS) {
+                let randomNum = Math.floor(Math.random() * 9) + 1;
+                if(randomNum !== targetNumber) {
+                    cellValues.push(randomNum);
                 }
-            }, 1000);
-        }
-
-        function loadGameLevel() {
-            if (currentLevel >= 20) {
-                endGame();
-                return;
             }
 
-            if (currentLevel > 0 && currentLevel % 5 === 0 && !isAdBreakActive) {
-                triggerAdBreak();
-                return;
+            for (let i = cellValues.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cellValues[i], cellValues[j]] = [cellValues[j], cellValues[i]];
             }
 
-            isAdBreakActive = false; 
-            showScreen('game-screen');
-            selectedAnswerIdx = null;
-            document.getElementById('current-level-txt').innerText = currentLevel + 1;
-            
-            const feedback = document.getElementById('feedback-msg');
-            feedback.className = "feedback-label";
-            feedback.innerText = "";
-
-            const currentData = gameData[currentLevel];
-            document.getElementById('game-image').style.backgroundImage = `url('${currentData.img}')`;
-            
-            for (let i = 0; i < 4; i++) {
-                const optElement = document.getElementById(`opt${i}`);
-                optElement.innerText = currentData.opts[i];
-                optElement.className = "option-card"; 
-            }
-
-            startSandClock();
-        }
-
-        function selectOption(index) {
-            selectedAnswerIdx = index;
-            for (let i = 0; i < 4; i++) {
-                document.getElementById(`opt${i}`).className = "option-card" + (i === index ? " selected" : "");
-            }
-        }
-
-        function startSandClock() {
-            clearInterval(timerInterval);
-            remainingSeconds = 10;
-            const sandFill = document.getElementById('sand-clock');
-            sandFill.style.height = "100%"; 
-
-            timerInterval = setInterval(() => {
-                remainingSeconds--;
-                sandFill.style.height = (remainingSeconds * 10) + "%";
-
-                if (remainingSeconds <= 0) {
-                    clearInterval(timerInterval);
-                    handleTimeUp();
-                }
-            }, 1000);
-        }
-
-        function handleTimeUp() {
-            const feedback = document.getElementById('feedback-msg');
-            feedback.innerText = "TIME UP!";
-            feedback.className = "feedback-label feedback-wrong";
-            
-            setTimeout(() => {
-                currentLevel++;
-                loadGameLevel();
-            }, 1200);
-        }
-
-        function commitAnswer() {
-            if (selectedAnswerIdx === null) return; 
-            clearInterval(timerInterval);
-
-            const currentData = gameData[currentLevel];
-            const feedback = document.getElementById('feedback-msg');
-
-            if (selectedAnswerIdx === currentData.correct) {
-                feedback.innerText = "CORRECT";
-                feedback.className = "feedback-label feedback-correct";
-                score += 5; 
-            } else {
-                feedback.innerText = "WRONG";
-                feedback.className = "feedback-label feedback-wrong";
-            }
-
-            setTimeout(() => {
-                currentLevel++;
-                loadGameLevel();
-            }, 1000);
-        }
-
-        function triggerAdBreak() {
-            isAdBreakActive = true; 
-            showScreen('ad-screen');
-
-            const adImg = document.getElementById('ad-image-placeholder');
-            adImg.src = `webinar-ad${adCounter}.png?t=${new Date().getTime()}`;
-
-            adCounter = (adCounter % 4) + 1;
-
-            const progressFill = document.getElementById('ad-progress');
-            progressFill.style.transition = "none";
-            progressFill.style.width = "0%";
-
-            setTimeout(() => {
-                progressFill.style.transition = "width 5s linear";
-                progressFill.style.width = "100%";
-            }, 50);
-
-            setTimeout(() => {
-                loadGameLevel(); 
-            }, 5050);
-        }
-
-        function endGame() {
-            showScreen('result-screen');
-            document.getElementById('final-iq-score').innerText = score;
-        }
-
-        function downloadResultImage() {
-            const targetElement = document.getElementById('downloadable-card');
-            
-            html2canvas(targetElement, {
-                backgroundColor: '#0d0d0d',
-                scale: 2 
-            }).then(canvas => {
-                const imageUri = canvas.toDataURL("image/png");
-                const anchorLink = document.createElement('a');
-                anchorLink.href = imageUri;
-                anchorLink.download = `IQ-Grid-Score-${score}.png`;
-                document.body.appendChild(anchorLink);
-                anchorLink.click();
-                document.body.removeChild(anchorLink);
+            cellValues.forEach(value => {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.textContent = value;
+                
+                cell.addEventListener('click', function handleCellClick() {
+                    cell.style.pointerEvents = 'none'; 
+                    
+                    if (value === targetNumber) {
+                        cell.classList.add('correct');
+                        foundTargetsCount++;
+                        checkRoundStatus();
+                    } else {
+                        cell.classList.add('wrong');
+                    }
+                });
+                gridElement.appendChild(cell);
             });
+
+            startTime = performance.now();
         }
+
+        function checkRoundStatus() {
+            if (foundTargetsCount === totalTargetsCount) {
+                let endTime = performance.now();
+                let durationInSeconds = (endTime - startTime) / 1000;
+                let avgSpeed = durationInSeconds / totalTargetsCount;
+                displayScore(avgSpeed);
+            }
+        }
+
+        function displayScore(avgSpeed) {
+            changeScreen('score-screen');
+            document.getElementById('speed-result').textContent = `Average Recognition Speed: ${avgSpeed.toFixed(2)}s per item`;
+            
+            let starsMarkup = '⭐';
+            if (avgSpeed < 0.8) {
+                starsMarkup = '⭐⭐⭐';
+            } else if (avgSpeed < 1.5) {
+                starsMarkup = '⭐⭐';
+            }
+            document.getElementById('star-rating').textContent = starsMarkup;
+
+            initStarAnimation();
+        }
+
+        // Stars Canvas Engine
+        function initStarAnimation() {
+            canvas = document.getElementById('star-canvas');
+            ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            stars = [];
+            for (let i = 0; i < 40; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * -canvas.height,
+                    size: Math.random() * 15 + 10,
+                    speed: Math.random() * 3 + 2,
+                    angle: Math.random() * 360
+                });
+            }
+            animateStars();
+        }
+
+        function animateStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#f1c40f';
+            let elementsStillFalling = false;
+
+            stars.forEach(star => {
+                ctx.save();
+                ctx.translate(star.x, star.y);
+                ctx.rotate((star.angle * Math.PI) / 180);
+                
+                ctx.beginPath();
+                for (let i = 0; i < 5; i++) {
+                    ctx.lineTo(Math.cos((18 + i * 72) * Math.PI / 180) * star.size, Math.sin((18 + i * 72) * Math.PI / 180) * star.size);
+                    ctx.lineTo(Math.cos((54 + i * 72) * Math.PI / 180) * (star.size/2), Math.sin((54 + i * 72) * Math.PI / 180) * (star.size/2));
+                }
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+
+                star.y += star.speed;
+                star.angle += 1;
+
+                if (star.y < canvas.height + 20) {
+                    elementsStillFalling = true;
+                }
+            });
+
+            if (elementsStillFalling) {
+                animationId = requestAnimationFrame(animateStars);
+            }
+        }
+
+        // Mid-Level Ad Screen Transition Logic
+        function showAd() {
+            cancelAnimationFrame(animationId); 
+            
+            const adImgElement = document.getElementById('ad-image');
+            adImgElement.src = adImages[levelAdIndex];
+            
+            levelAdIndex = (levelAdIndex + 1) % adImages.length; 
+
+            changeScreen('ad-screen');
+            
+            let timeLeft = 5;
+            const timerDisplay = document.getElementById('countdown');
+            timerDisplay.textContent = timeLeft;
+
+            const interval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = timeLeft;
+                if(timeLeft <= 0) {
+                    clearInterval(interval);
+                    nextLevel();
+                }
+            }, 1000);
+        }
+
+        function nextLevel() {
+            currentLevel++;
+            startGame();
+        }
+
+        window.addEventListener('resize', () => {
+            if (canvas && document.getElementById('score-screen').classList.contains('active')) {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+        });
     </script>
 </body>
 </html>
