@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IQ Grid - Powered by Gen-AI Xperrari</title>
-    <!-- Google Fonts for Modern Look -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <!-- Html2Canvas for downloading the result box as an image -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -36,12 +36,11 @@
         }
 
         .screen {
-            display: none;
+            display: none; 
             width: 100%;
             max-width: 500px;
             height: 90vh;
             padding: 20px;
-            display: flex;
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
@@ -49,10 +48,10 @@
             position: absolute;
         }
 
-        /* Active screen utility */
-        .active { display: flex !important; }
+        .screen.active { 
+            display: flex !important; 
+        }
 
-        /* Glowing Fonts style */
         .glow-text {
             font-family: 'Orbitron', sans-serif;
             color: var(--primary-yellow);
@@ -60,36 +59,54 @@
             letter-spacing: 2px;
         }
 
-        /* Large CTA Buttons */
         .btn-main {
             font-family: 'Orbitron', sans-serif;
             background-color: var(--primary-yellow);
             color: #000;
             border: none;
             padding: 15px 40px;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: bold;
             cursor: pointer;
             border-radius: 30px;
             box-shadow: 0 5px 15px rgba(241, 196, 15, 0.4);
             transition: all 0.2s ease;
+            width: 80%;
+            max-width: 300px;
         }
         .btn-main:hover {
             transform: scale(1.05);
             background-color: var(--dark-yellow);
         }
 
-        /* SCREEN 1: Welcome */
+        .btn-sub {
+            font-family: 'Orbitron', sans-serif;
+            background-color: transparent;
+            color: var(--primary-yellow);
+            border: 2px solid var(--primary-yellow);
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: all 0.2s ease;
+            width: 80%;
+            max-width: 300px;
+            margin-top: 15px;
+        }
+        .btn-sub:hover {
+            background-color: rgba(241, 196, 15, 0.1);
+        }
+
         #welcome-screen h1 {
             font-size: 3rem;
-            margin-top: 20%;
+            margin-top: 15%;
         }
         #welcome-screen p {
             font-size: 1.1rem;
             color: #888;
         }
 
-        /* SCREEN 2: Countdown */
         #countdown-screen {
             font-family: 'Orbitron', sans-serif;
             font-size: 6rem;
@@ -97,7 +114,6 @@
             color: var(--primary-yellow);
         }
 
-        /* SCREEN 3: Game Board */
         #game-screen {
             justify-content: flex-start;
             gap: 15px;
@@ -109,8 +125,27 @@
             align-items: center;
             font-family: 'Orbitron', sans-serif;
         }
+
+        .btn-close {
+            background: transparent;
+            border: 2px solid #ff4d4d;
+            color: #ff4d4d;
+            font-size: 1rem;
+            font-weight: bold;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .btn-close:hover {
+            background: #ff4d4d;
+            color: #000;
+        }
         
-        /* Sand Clock Timer Design */
         .timer-container {
             width: 40px;
             height: 40px;
@@ -140,7 +175,6 @@
             transition: border-color 0.3s ease;
         }
 
-        /* 4 Option Buttons grid */
         .options-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -151,11 +185,13 @@
         .option-card {
             background-color: var(--card-bg);
             border: 2px solid #333;
-            padding: 15px;
+            padding: 15px 10px;
             border-radius: 10px;
             font-weight: 600;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.2s;
+            word-wrap: break-word;
         }
         .option-card.selected {
             border-color: var(--primary-yellow);
@@ -173,7 +209,6 @@
         .feedback-correct { color: #2ecc71; opacity: 1; }
         .feedback-wrong { color: #e74c3c; opacity: 1; }
 
-        /* SCREEN 4: Ads Window */
         #ad-screen {
             background-color: #111;
             border: 4px dashed var(--primary-yellow);
@@ -181,13 +216,15 @@
             justify-content: center;
             gap: 20px;
         }
-        .ad-banner {
-            width: 90%;
-            background: linear-gradient(135deg, #222, #333);
-            border-radius: 10px;
-            padding: 30px 20px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        
+        .ad-link-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            text-decoration: none;
+            cursor: pointer;
         }
+        
         .progress-bar-container {
             width: 80%;
             height: 10px;
@@ -195,15 +232,52 @@
             border-radius: 5px;
             overflow: hidden;
             margin-top: 20px;
+            position: relative;
         }
         .progress-bar-fill {
             height: 100%;
             width: 0%;
             background-color: var(--primary-yellow);
-            transition: width 5s linear;
         }
 
-        /* SCREEN 5: Results Window */
+        #gallery-screen {
+            justify-content: center;
+            gap: 20px;
+        }
+        .slider-container {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+        .slider-img {
+            width: 100%;
+            max-height: 350px;
+            border-radius: 15px;
+            border: 3px solid var(--primary-yellow);
+            object-fit: contain;
+            background-color: #111;
+        }
+        .slider-arrow {
+            background: var(--primary-yellow);
+            color: #000;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .slider-arrow:hover {
+            background: var(--dark-yellow);
+        }
+
         #result-screen {
             justify-content: center;
             gap: 25px;
@@ -245,13 +319,18 @@
 </head>
 <body>
 
-    <!-- SCREEN 1: WELCOME WINDOW -->
+    <!-- SCREEN 1: WELCOME SCREEN -->
     <div id="welcome-screen" class="screen active">
         <div>
             <h1 class="glow-text">IQ GRID</h1>
             <p style="margin-top: 15px;">Let's play and get your IQ level tested.</p>
         </div>
-        <button class="btn-main" onclick="startCountdown()">GO</button>
+        
+        <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+            <button class="btn-main" onclick="startCountdown()">GO</button>
+            <button class="btn-sub" onclick="openGallery()">AI Learning (Ads)</button>
+        </div>
+
         <div class="glow-text" style="font-size: 0.8rem; margin-bottom: 20px;">Powered by Gen-AI Xperrari</div>
     </div>
 
@@ -265,6 +344,7 @@
             <div class="timer-container">
                 <div id="sand-clock" class="sand-fill"></div>
             </div>
+            <button class="btn-close" onclick="exitToHome()">X</button>
         </div>
 
         <div id="game-image" class="image-container"></div>
@@ -282,48 +362,70 @@
     </div>
 
     <!-- SCREEN 4: AD BREAK SCREEN -->
-<div id="ad-screen" class="screen">
-    <div style="font-size: 0.8rem; text-transform: uppercase; color: #666; letter-spacing: 2px;">Sponsored Announcement</div>
-    <!-- Your Custom Banner Image -->
-    <img src="webinar-ad.png" alt="Webinar Ad" style="width: 90%; max-height: 250px; border-radius: 10px; object-fit: contain;">
+    <div id="ad-screen" class="screen">
+        <div style="font-size: 0.8rem; text-transform: uppercase; color: #666; letter-spacing: 2px;">Sponsored Announcement</div>
+        
+        <!-- Clickable Wrap targeting WhatsApp with pre-filled message variables -->
+        <a href="https://wa.me/94712220206?text=Give%20me%20more%20details%20about%20FREE%20AI%20Webinar" target="_blank" class="ad-link-wrapper">
+            <img id="ad-image-placeholder" src="webinar-ad1.png" alt="Webinar Ad" style="width: 90%; max-height: 250px; border-radius: 10px; object-fit: contain;">
+        </a>
+        
+        <div class="progress-bar-container">
+            <div id="ad-progress" class="progress-bar-fill"></div>
+        </div>
+    </div>
 
-    <!-- SCREEN 5: RESULTS SCREEN -->
+    <!-- SCREEN 5: AI LEARNING GALLERY -->
+    <div id="gallery-screen" class="screen">
+        <h2 class="glow-text" style="font-size: 1.8rem;">AI Learning Gallery</h2>
+        <div class="slider-container">
+            <button class="slider-arrow" onclick="slideAd(-1)">◀</button>
+            
+            <!-- Clickable Wrap targeting WhatsApp with pre-filled message variables -->
+            <a href="https://wa.me/94712220206?text=Give%20me%20more%20details%20about%20FREE%20AI%20Webinar" target="_blank" class="ad-link-wrapper" style="width: 70%;">
+                <img id="gallery-img-placeholder" src="webinar-ad1.png" alt="Gallery Ad" class="slider-img">
+            </a>
+            
+            <button class="slider-arrow" onclick="slideAd(1)">▶</button>
+        </div>
+        <button class="btn-sub" onclick="exitToHome()" style="margin-top: 10px;">Back to Home</button>
+        <div class="glow-text" style="font-size: 0.7rem;">Powered by Gen-AI Xperrari</div>
+    </div>
+
+    <!-- SCREEN 6: RESULTS SCREEN -->
     <div id="result-screen" class="screen">
-        <!-- This exact box will be captured and downloaded as an image -->
         <div class="result-box" id="downloadable-card">
             <h2 class="glow-text" style="font-size: 1.8rem;">OFFICIAL RESULT</h2>
             <div style="width: 60px; height: 2px; background-color: var(--primary-yellow);"></div>
             <div class="iq-score">YOUR IQ Level: <span id="final-iq-score" style="color: var(--primary-yellow);">0</span>/100</div>
             <div class="glow-text" style="font-size: 0.75rem; color: #888;">Powered by GEN-AI Xperrari</div>
         </div>
-
         <button class="btn-download" onclick="downloadResultImage()">📥 Download Result Card</button>
+        <button class="btn-sub" onclick="exitToHome()">Play Again</button>
     </div>
 
     <script>
-        // --- GAME DATABASE (20 Levels covering Science, Tech, Economy, Culture, Money, Astrology) ---
-        // Placeholder images from Unsplash matching your requested aesthetic categories
         const gameData = [
-            { img: "https://images.unsplash.com/photo-1507668077129-56e32842fceb?w=500", opts: ["Quantum", "Ecology", "Fossil", "Acoustics"], correct: 0 }, // Science
-            { img: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=500", opts: ["Bio-Tech", "Automation", "Manual", "Analog"], correct: 1 }, // Tech
-            { img: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=500", opts: ["Inflation", "Bear Market", "Stock Index", "Deflation"], correct: 2 }, // Economy
-            { img: "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=500", opts: ["Festival", "Artifact", "Folklore", "Heritage"], correct: 3 }, // Culture
-            { img: "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?w=500", opts: ["Crypto", "Barter", "Fiat Currency", "Bond"], correct: 0 }, // Money
-            { img: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=500", opts: ["Zodiac", "Nebula", "Constellation", "Horoscope"], correct: 2 }, // Astrology
-            { img: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=500", opts: ["Chemistry", "Geology", "Botany", "Meteorology"], correct: 0 }, // Science
-            { img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=500", opts: ["Hardware", "Cyber System", "Server Hack", "Database"], correct: 1 }, // Tech
-            { img: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=500", opts: ["Forex", "Trade Deficit", "GDP Yield", "Fiscal Year"], correct: 0 }, // Economy
-            { img: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=500", opts: ["Sculpture", "Expressionism", "Fine Art", "Calligraphy"], correct: 2 }, // Culture
-            { img: "https://images.unsplash.com/photo-1565514020179-026b92b84bb6?w=500", opts: ["Capital", "Digital Token", "Liquidity", "Bullion"], correct: 3 }, // Money
-            { img: "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=500", opts: ["Cosmology", "Solstice", "Eclipse", "Galaxy Cluster"], correct: 0 }, // Astrology
-            { img: "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?w=500", opts: ["Neural Net", "Cybernetics", "Encryption", "Optics"], correct: 2 }, // Tech
-            { img: "https://images.unsplash.com/photo-1521898284481-a5ec348cb555?w=500", opts: ["Microeconomics", "Real Estate", "Commerce", "Auditing"], correct: 1 }, // Economy
-            { img: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=500", opts: ["Carnival", "Symphony", "Tribal Ritual", "Theatre"], correct: 0 }, // Culture
-            { img: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500", opts: ["Tax Rate", "Investment", "Revenue Stream", "Portfolio"], correct: 3 }, // Money
-            { img: "https://images.unsplash.com/photo-1502134249126-9f3755a50d78?w=500", opts: ["Asteroid", "Supernova", "Celestial Map", "Lunar Phase"], correct: 2 }, // Astrology
-            { img: "https://images.unsplash.com/photo-1518152006812-edab29b069ac?w=500", opts: ["Thermodynamics", "Particle Physics", "Astrophysics", "Kinematics"], correct: 1 }, // Science
-            { img: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500", opts: ["Machine Vision", "AI Android", "Data Synthesis", "Augmentation"], correct: 1 }, // Tech
-            { img: "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?w=500", opts: ["Exhibition", "Socio-Culture", "Avant-Garde", "Customs"], correct: 2 }  // Culture
+            { img: "https://images.unsplash.com/photo-1507668077129-56e32842fceb?w=500", opts: ["Quantum", "Ecology", "Fossil", "Acoustics"], correct: 0 }, 
+            { img: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=500", opts: ["Bio-Tech", "Automation", "Manual", "Analog"], correct: 1 }, 
+            { img: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=500", opts: ["Inflation", "Bear Market", "Stock Index", "Deflation"], correct: 2 }, 
+            { img: "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=500", opts: ["Festival", "Artifact", "Folklore", "Heritage"], correct: 3 }, 
+            { img: "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?w=500", opts: ["Crypto", "Barter", "Fiat Currency", "Bond"], correct: 0 }, 
+            { img: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=500", opts: ["Zodiac", "Nebula", "Constellation", "Horoscope"], correct: 2 }, 
+            { img: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=500", opts: ["Chemistry", "Geology", "Botany", "Meteorology"], correct: 0 }, 
+            { img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=500", opts: ["Hardware", "Cyber System", "Server Hack", "Database"], correct: 1 }, 
+            { img: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=500", opts: ["Forex", "Trade Deficit", "GDP Yield", "Fiscal Year"], correct: 0 }, 
+            { img: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=500", opts: ["Sculpture", "Expressionism", "Fine Art", "Calligraphy"], correct: 2 }, 
+            { img: "https://images.unsplash.com/photo-1565514020179-026b92b84bb6?w=500", opts: ["Capital", "Digital Token", "Liquidity", "Bullion"], correct: 3 }, 
+            { img: "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=500", opts: ["Cosmology", "Solstice", "Eclipse", "Galaxy Cluster"], correct: 0 }, 
+            { img: "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?w=500", opts: ["Neural Net", "Cybernetics", "Encryption", "Optics"], correct: 2 }, 
+            { img: "https://images.unsplash.com/photo-1521898284481-a5ec348cb555?w=500", opts: ["Microeconomics", "Real Estate", "Commerce", "Auditing"], correct: 1 }, 
+            { img: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=500", opts: ["Carnival", "Symphony", "Tribal Ritual", "Theatre"], correct: 0 }, 
+            { img: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500", opts: ["Tax Rate", "Investment", "Revenue Stream", "Portfolio"], correct: 3 }, 
+            { img: "https://images.unsplash.com/photo-1502134249126-9f3755a50d78?w=500", opts: ["Asteroid", "Supernova", "Celestial Map", "Lunar Phase"], correct: 2 }, 
+            { img: "https://images.unsplash.com/photo-1518152006812-edab29b069ac?w=500", opts: ["Thermodynamics", "Particle Physics", "Astrophysics", "Kinematics"], correct: 1 }, 
+            { img: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500", opts: ["Machine Vision", "AI Android", "Data Synthesis", "Augmentation"], correct: 1 }, 
+            { img: "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?w=500", opts: ["Exhibition", "Socio-Culture", "Avant-Garde", "Customs"], correct: 2 }  
         ];
 
         let currentLevel = 0;
@@ -331,14 +433,42 @@
         let selectedAnswerIdx = null;
         let timerInterval = null;
         let remainingSeconds = 10;
+        let adCounter = 1; 
+        let galleryCounter = 1; 
+        let isAdBreakActive = false; 
 
-        // Navigate views cleanly
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
         }
 
-        // --- STEP 1: COUNTDOWN SYSTEM ---
+        function exitToHome() {
+            clearInterval(timerInterval); 
+            currentLevel = 0;
+            score = 0;
+            selectedAnswerIdx = null;
+            isAdBreakActive = false;
+            showScreen('welcome-screen');
+        }
+
+        function openGallery() {
+            galleryCounter = 1;
+            updateGalleryImage();
+            showScreen('gallery-screen');
+        }
+
+        function slideAd(direction) {
+            galleryCounter += direction;
+            if (galleryCounter > 4) galleryCounter = 1;
+            if (galleryCounter < 1) galleryCounter = 4;
+            updateGalleryImage();
+        }
+
+        function updateGalleryImage() {
+            const galleryImg = document.getElementById('gallery-img-placeholder');
+            galleryImg.src = `webinar-ad${galleryCounter}.png?t=${new Date().getTime()}`;
+        }
+
         function startCountdown() {
             showScreen('countdown-screen');
             let count = 3;
@@ -356,40 +486,35 @@
             }, 1000);
         }
 
-        // --- STEP 2: LOAD GAME BOARD LEVEL ---
         function loadGameLevel() {
             if (currentLevel >= 20) {
                 endGame();
                 return;
             }
 
-            // Check for Ad Break every 5 completed questions
-            if (currentLevel > 0 && currentLevel % 5 === 0) {
+            if (currentLevel > 0 && currentLevel % 5 === 0 && !isAdBreakActive) {
                 triggerAdBreak();
                 return;
             }
 
+            isAdBreakActive = false; 
             showScreen('game-screen');
             selectedAnswerIdx = null;
             document.getElementById('current-level-txt').innerText = currentLevel + 1;
             
-            // Clean interface labels
             const feedback = document.getElementById('feedback-msg');
             feedback.className = "feedback-label";
             feedback.innerText = "";
 
-            // Set up level data assets
             const currentData = gameData[currentLevel];
             document.getElementById('game-image').style.backgroundImage = `url('${currentData.img}')`;
             
-            // Populate choices
             for (let i = 0; i < 4; i++) {
                 const optElement = document.getElementById(`opt${i}`);
                 optElement.innerText = currentData.opts[i];
                 optElement.className = "option-card"; 
             }
 
-            // Start Sand Clock countdown timer
             startSandClock();
         }
 
@@ -400,16 +525,14 @@
             }
         }
 
-        // --- STEP 3: TIMER (SAND CLOCK LOGIC) ---
         function startSandClock() {
             clearInterval(timerInterval);
             remainingSeconds = 10;
             const sandFill = document.getElementById('sand-clock');
-            sandFill.style.height = "100%"; // Reset fill
+            sandFill.style.height = "100%"; 
 
             timerInterval = setInterval(() => {
                 remainingSeconds--;
-                // Gradually drain sand downward to match remaining percentage
                 sandFill.style.height = (remainingSeconds * 10) + "%";
 
                 if (remainingSeconds <= 0) {
@@ -430,9 +553,8 @@
             }, 1200);
         }
 
-        // --- STEP 4: CONFIRM BUTTON EVALUATION ---
         function commitAnswer() {
-            if (selectedAnswerIdx === null) return; // Must pick something first
+            if (selectedAnswerIdx === null) return; 
             clearInterval(timerInterval);
 
             const currentData = gameData[currentLevel];
@@ -441,44 +563,41 @@
             if (selectedAnswerIdx === currentData.correct) {
                 feedback.innerText = "CORRECT";
                 feedback.className = "feedback-label feedback-correct";
-                score += 5; // 5 points per question = Max 100 IQ points
+                score += 5; 
             } else {
                 feedback.innerText = "WRONG";
                 feedback.className = "feedback-label feedback-wrong";
             }
 
-            // Quick display flash before switching levels
             setTimeout(() => {
                 currentLevel++;
                 loadGameLevel();
             }, 1000);
         }
 
-        // --- STEP 5: AUTOMATED SPONSORED AD BREAK ---
         function triggerAdBreak() {
+            isAdBreakActive = true; 
             showScreen('ad-screen');
+
+            const adImg = document.getElementById('ad-image-placeholder');
+            adImg.src = `webinar-ad${adCounter}.png?t=${new Date().getTime()}`;
+
+            adCounter = (adCounter % 4) + 1;
+
             const progressFill = document.getElementById('ad-progress');
+            progressFill.style.transition = "none";
             progressFill.style.width = "0%";
-            
-            // Force progress layout trigger for clean animation
+
             setTimeout(() => {
+                progressFill.style.transition = "width 5s linear";
                 progressFill.style.width = "100%";
             }, 50);
 
-            // Automated 5 second view tracking window before bouncing back
             setTimeout(() => {
-                // Modify database track seamlessly
-                if(currentLevel % 5 === 0) {
-                    // Temporarily update verification states to avoid infinity looping hooks
-                    const currentData = gameData[currentLevel];
-                    document.getElementById('game-image').style.backgroundImage = `url('${currentData.img}')`;
-                }
-                showScreen('game-screen');
-                loadGameLevel();
+                loadGameLevel(); 
             }, 5050);
         }
 
-        // --- STEP 6: ENDGAME & DEVICE DOWNLOAD GENERATOR ---
         function endGame() {
             showScreen('result-screen');
             document.getElementById('final-iq-score').innerText = score;
@@ -489,7 +608,7 @@
             
             html2canvas(targetElement, {
                 backgroundColor: '#0d0d0d',
-                scale: 2 // Boost quality output density
+                scale: 2 
             }).then(canvas => {
                 const imageUri = canvas.toDataURL("image/png");
                 const anchorLink = document.createElement('a');
