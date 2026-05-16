@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IQ Grid - Powered by Gen-AI Xperrari</title>
+    <!-- Google Fonts for Modern Look -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Html2Canvas for downloading the result box as an image -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-color: #0d0d0d;
+            --primary-yellow: #f1c40f;
+            --dark-yellow: #d4ac0d;
+            --text-white: #ffffff;
+            --card-bg: #1a1a1a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-white);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            max-width: 500px;
+            height: 90vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            position: absolute;
+        }
+
+        /* Active screen utility */
+        .active { display: flex !important; }
+
+        /* Glowing Fonts style */
+        .glow-text {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary-yellow);
+            text-shadow: 0 0 10px rgba(241, 196, 15, 0.7), 0 0 20px rgba(241, 196, 15, 0.5);
+            letter-spacing: 2px;
+        }
+
+        /* Large CTA Buttons */
+        .btn-main {
+            font-family: 'Orbitron', sans-serif;
+            background-color: var(--primary-yellow);
+            color: #000;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 30px;
+            box-shadow: 0 5px 15px rgba(241, 196, 15, 0.4);
+            transition: all 0.2s ease;
+        }
+        .btn-main:hover {
+            transform: scale(1.05);
+            background-color: var(--dark-yellow);
+        }
+
+        /* SCREEN 1: Welcome */
+        #welcome-screen h1 {
+            font-size: 3rem;
+            margin-top: 20%;
+        }
+        #welcome-screen p {
+            font-size: 1.1rem;
+            color: #888;
+        }
+
+        /* SCREEN 2: Countdown */
+        #countdown-screen {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 6rem;
+            justify-content: center;
+            color: var(--primary-yellow);
+        }
+
+        /* SCREEN 3: Game Board */
+        #game-screen {
+            justify-content: flex-start;
+            gap: 15px;
+        }
+        .game-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        /* Sand Clock Timer Design */
+        .timer-container {
+            width: 40px;
+            height: 40px;
+            position: relative;
+            background: #222;
+            border: 2px solid var(--primary-yellow);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .sand-fill {
+            width: 100%;
+            height: 100%;
+            background-color: var(--primary-yellow);
+            position: absolute;
+            bottom: 0;
+            transition: height 1s linear;
+        }
+
+        .image-container {
+            width: 100%;
+            height: 220px;
+            border-radius: 15px;
+            border: 3px solid #333;
+            background-size: cover;
+            background-position: center;
+            background-color: #222;
+            transition: border-color 0.3s ease;
+        }
+
+        /* 4 Option Buttons grid */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .option-card {
+            background-color: var(--card-bg);
+            border: 2px solid #333;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .option-card.selected {
+            border-color: var(--primary-yellow);
+            background-color: rgba(241, 196, 15, 0.1);
+        }
+
+        .feedback-label {
+            height: 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 5px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .feedback-correct { color: #2ecc71; opacity: 1; }
+        .feedback-wrong { color: #e74c3c; opacity: 1; }
+
+        /* SCREEN 4: Ads Window */
+        #ad-screen {
+            background-color: #111;
+            border: 4px dashed var(--primary-yellow);
+            border-radius: 20px;
+            justify-content: center;
+            gap: 20px;
+        }
+        .ad-banner {
+            width: 90%;
+            background: linear-gradient(135deg, #222, #333);
+            border-radius: 10px;
+            padding: 30px 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        .progress-bar-container {
+            width: 80%;
+            height: 10px;
+            background-color: #333;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--primary-yellow);
+            transition: width 5s linear;
+        }
+
+        /* SCREEN 5: Results Window */
+        #result-screen {
+            justify-content: center;
+            gap: 25px;
+        }
+        .result-box {
+            background: linear-gradient(145deg, #1f1f1f, #0d0d0d);
+            border: 3px solid var(--primary-yellow);
+            padding: 40px 30px;
+            border-radius: 20px;
+            width: 90%;
+            box-shadow: 0 15px 30px rgba(241, 196, 15, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        .iq-score {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            color: #fff;
+            margin: 15px 0;
+        }
+        .btn-download {
+            background-color: transparent;
+            color: var(--primary-yellow);
+            border: 2px solid var(--primary-yellow);
+            padding: 10px 25px;
+            font-size: 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-download:hover {
+            background-color: var(--primary-yellow);
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SCREEN 1: WELCOME WINDOW -->
+    <div id="welcome-screen" class="screen active">
+        <div>
+            <h1 class="glow-text">IQ GRID</h1>
+            <p style="margin-top: 15px;">Let's play and get your IQ level tested.</p>
+        </div>
+        <button class="btn-main" onclick="startCountdown()">GO</button>
+        <div class="glow-text" style="font-size: 0.8rem; margin-bottom: 20px;">Powered by Gen-AI Xperrari</div>
+    </div>
+
+    <!-- SCREEN 2: COUNTDOWN SCREEN -->
+    <div id="countdown-screen" class="screen">3</div>
+
+    <!-- SCREEN 3: GAME SCREEN -->
+    <div id="game-screen" class="screen">
+        <div class="game-header">
+            <div>Level: <span id="current-level-txt">1</span>/20</div>
+            <div class="timer-container">
+                <div id="sand-clock" class="sand-fill"></div>
+            </div>
+        </div>
+
+        <div id="game-image" class="image-container"></div>
+        <div id="feedback-msg" class="feedback-label"></div>
+
+        <div class="options-grid">
+            <div class="option-card" onclick="selectOption(0)" id="opt0">Option 1</div>
+            <div class="option-card" onclick="selectOption(1)" id="opt1">Option 2</div>
+            <div class="option-card" onclick="selectOption(2)" id="opt2">Option 3</div>
+            <div class="option-card" onclick="selectOption(3)" id="opt3">Option 4</div>
+        </div>
+
+        <button class="btn-main" id="confirm-btn" onclick="commitAnswer()" style="margin-top: 15px; font-size: 1.1rem; padding: 10px 30px;">CONFIRM</button>
+        <div class="glow-text" style="font-size: 0.7rem; margin-top: auto;">Powered by Gen-AI Xperrari</div>
+    </div>
+
+    <!-- SCREEN 4: AD BREAK SCREEN -->
+<div id="ad-screen" class="screen">
+    <div style="font-size: 0.8rem; text-transform: uppercase; color: #666; letter-spacing: 2px;">Sponsored Announcement</div>
+    <!-- Your Custom Banner Image -->
+    <img src="webinar-ad.png" alt="Webinar Ad" style="width: 90%; max-height: 250px; border-radius: 10px; object-fit: contain;">
+
+    <!-- SCREEN 5: RESULTS SCREEN -->
+    <div id="result-screen" class="screen">
+        <!-- This exact box will be captured and downloaded as an image -->
+        <div class="result-box" id="downloadable-card">
+            <h2 class="glow-text" style="font-size: 1.8rem;">OFFICIAL RESULT</h2>
+            <div style="width: 60px; height: 2px; background-color: var(--primary-yellow);"></div>
+            <div class="iq-score">YOUR IQ Level: <span id="final-iq-score" style="color: var(--primary-yellow);">0</span>/100</div>
+            <div class="glow-text" style="font-size: 0.75rem; color: #888;">Powered by GEN-AI Xperrari</div>
+        </div>
+
+        <button class="btn-download" onclick="downloadResultImage()">📥 Download Result Card</button>
+    </div>
+
+    <script>
+        // --- GAME DATABASE (20 Levels covering Science, Tech, Economy, Culture, Money, Astrology) ---
+        // Placeholder images from Unsplash matching your requested aesthetic categories
+        const gameData = [
+            { img: "https://images.unsplash.com/photo-1507668077129-56e32842fceb?w=500", opts: ["Quantum", "Ecology", "Fossil", "Acoustics"], correct: 0 }, // Science
+            { img: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=500", opts: ["Bio-Tech", "Automation", "Manual", "Analog"], correct: 1 }, // Tech
+            { img: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=500", opts: ["Inflation", "Bear Market", "Stock Index", "Deflation"], correct: 2 }, // Economy
+            { img: "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=500", opts: ["Festival", "Artifact", "Folklore", "Heritage"], correct: 3 }, // Culture
+            { img: "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?w=500", opts: ["Crypto", "Barter", "Fiat Currency", "Bond"], correct: 0 }, // Money
+            { img: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=500", opts: ["Zodiac", "Nebula", "Constellation", "Horoscope"], correct: 2 }, // Astrology
+            { img: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=500", opts: ["Chemistry", "Geology", "Botany", "Meteorology"], correct: 0 }, // Science
+            { img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=500", opts: ["Hardware", "Cyber System", "Server Hack", "Database"], correct: 1 }, // Tech
+            { img: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=500", opts: ["Forex", "Trade Deficit", "GDP Yield", "Fiscal Year"], correct: 0 }, // Economy
+            { img: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=500", opts: ["Sculpture", "Expressionism", "Fine Art", "Calligraphy"], correct: 2 }, // Culture
+            { img: "https://images.unsplash.com/photo-1565514020179-026b92b84bb6?w=500", opts: ["Capital", "Digital Token", "Liquidity", "Bullion"], correct: 3 }, // Money
+            { img: "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=500", opts: ["Cosmology", "Solstice", "Eclipse", "Galaxy Cluster"], correct: 0 }, // Astrology
+            { img: "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?w=500", opts: ["Neural Net", "Cybernetics", "Encryption", "Optics"], correct: 2 }, // Tech
+            { img: "https://images.unsplash.com/photo-1521898284481-a5ec348cb555?w=500", opts: ["Microeconomics", "Real Estate", "Commerce", "Auditing"], correct: 1 }, // Economy
+            { img: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=500", opts: ["Carnival", "Symphony", "Tribal Ritual", "Theatre"], correct: 0 }, // Culture
+            { img: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500", opts: ["Tax Rate", "Investment", "Revenue Stream", "Portfolio"], correct: 3 }, // Money
+            { img: "https://images.unsplash.com/photo-1502134249126-9f3755a50d78?w=500", opts: ["Asteroid", "Supernova", "Celestial Map", "Lunar Phase"], correct: 2 }, // Astrology
+            { img: "https://images.unsplash.com/photo-1518152006812-edab29b069ac?w=500", opts: ["Thermodynamics", "Particle Physics", "Astrophysics", "Kinematics"], correct: 1 }, // Science
+            { img: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500", opts: ["Machine Vision", "AI Android", "Data Synthesis", "Augmentation"], correct: 1 }, // Tech
+            { img: "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?w=500", opts: ["Exhibition", "Socio-Culture", "Avant-Garde", "Customs"], correct: 2 }  // Culture
+        ];
+
+        let currentLevel = 0;
+        let score = 0;
+        let selectedAnswerIdx = null;
+        let timerInterval = null;
+        let remainingSeconds = 10;
+
+        // Navigate views cleanly
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // --- STEP 1: COUNTDOWN SYSTEM ---
+        function startCountdown() {
+            showScreen('countdown-screen');
+            let count = 3;
+            const cdScreen = document.getElementById('countdown-screen');
+            cdScreen.innerText = count;
+
+            let countdownInterval = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    cdScreen.innerText = count;
+                } else {
+                    clearInterval(countdownInterval);
+                    loadGameLevel();
+                }
+            }, 1000);
+        }
+
+        // --- STEP 2: LOAD GAME BOARD LEVEL ---
+        function loadGameLevel() {
+            if (currentLevel >= 20) {
+                endGame();
+                return;
+            }
+
+            // Check for Ad Break every 5 completed questions
+            if (currentLevel > 0 && currentLevel % 5 === 0) {
+                triggerAdBreak();
+                return;
+            }
+
+            showScreen('game-screen');
+            selectedAnswerIdx = null;
+            document.getElementById('current-level-txt').innerText = currentLevel + 1;
+            
+            // Clean interface labels
+            const feedback = document.getElementById('feedback-msg');
+            feedback.className = "feedback-label";
+            feedback.innerText = "";
+
+            // Set up level data assets
+            const currentData = gameData[currentLevel];
+            document.getElementById('game-image').style.backgroundImage = `url('${currentData.img}')`;
+            
+            // Populate choices
+            for (let i = 0; i < 4; i++) {
+                const optElement = document.getElementById(`opt${i}`);
+                optElement.innerText = currentData.opts[i];
+                optElement.className = "option-card"; 
+            }
+
+            // Start Sand Clock countdown timer
+            startSandClock();
+        }
+
+        function selectOption(index) {
+            selectedAnswerIdx = index;
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`opt${i}`).className = "option-card" + (i === index ? " selected" : "");
+            }
+        }
+
+        // --- STEP 3: TIMER (SAND CLOCK LOGIC) ---
+        function startSandClock() {
+            clearInterval(timerInterval);
+            remainingSeconds = 10;
+            const sandFill = document.getElementById('sand-clock');
+            sandFill.style.height = "100%"; // Reset fill
+
+            timerInterval = setInterval(() => {
+                remainingSeconds--;
+                // Gradually drain sand downward to match remaining percentage
+                sandFill.style.height = (remainingSeconds * 10) + "%";
+
+                if (remainingSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeUp();
+                }
+            }, 1000);
+        }
+
+        function handleTimeUp() {
+            const feedback = document.getElementById('feedback-msg');
+            feedback.innerText = "TIME UP!";
+            feedback.className = "feedback-label feedback-wrong";
+            
+            setTimeout(() => {
+                currentLevel++;
+                loadGameLevel();
+            }, 1200);
+        }
+
+        // --- STEP 4: CONFIRM BUTTON EVALUATION ---
+        function commitAnswer() {
+            if (selectedAnswerIdx === null) return; // Must pick something first
+            clearInterval(timerInterval);
+
+            const currentData = gameData[currentLevel];
+            const feedback = document.getElementById('feedback-msg');
+
+            if (selectedAnswerIdx === currentData.correct) {
+                feedback.innerText = "CORRECT";
+                feedback.className = "feedback-label feedback-correct";
+                score += 5; // 5 points per question = Max 100 IQ points
+            } else {
+                feedback.innerText = "WRONG";
+                feedback.className = "feedback-label feedback-wrong";
+            }
+
+            // Quick display flash before switching levels
+            setTimeout(() => {
+                currentLevel++;
+                loadGameLevel();
+            }, 1000);
+        }
+
+        // --- STEP 5: AUTOMATED SPONSORED AD BREAK ---
+        function triggerAdBreak() {
+            showScreen('ad-screen');
+            const progressFill = document.getElementById('ad-progress');
+            progressFill.style.width = "0%";
+            
+            // Force progress layout trigger for clean animation
+            setTimeout(() => {
+                progressFill.style.width = "100%";
+            }, 50);
+
+            // Automated 5 second view tracking window before bouncing back
+            setTimeout(() => {
+                // Modify database track seamlessly
+                if(currentLevel % 5 === 0) {
+                    // Temporarily update verification states to avoid infinity looping hooks
+                    const currentData = gameData[currentLevel];
+                    document.getElementById('game-image').style.backgroundImage = `url('${currentData.img}')`;
+                }
+                showScreen('game-screen');
+                loadGameLevel();
+            }, 5050);
+        }
+
+        // --- STEP 6: ENDGAME & DEVICE DOWNLOAD GENERATOR ---
+        function endGame() {
+            showScreen('result-screen');
+            document.getElementById('final-iq-score').innerText = score;
+        }
+
+        function downloadResultImage() {
+            const targetElement = document.getElementById('downloadable-card');
+            
+            html2canvas(targetElement, {
+                backgroundColor: '#0d0d0d',
+                scale: 2 // Boost quality output density
+            }).then(canvas => {
+                const imageUri = canvas.toDataURL("image/png");
+                const anchorLink = document.createElement('a');
+                anchorLink.href = imageUri;
+                anchorLink.download = `IQ-Grid-Score-${score}.png`;
+                document.body.appendChild(anchorLink);
+                anchorLink.click();
+                document.body.removeChild(anchorLink);
+            });
+        }
+    </script>
+</body>
+</html>
