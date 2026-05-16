@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Speed Match Game</title>
     <style>
         :root {
@@ -15,8 +15,14 @@
             --wrong-color: #e84118;
         }
 
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
             margin: 0;
+            padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--light-text);
@@ -24,7 +30,12 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            height: -webkit-fill-available; /* Fix for mobile Safari address bar */
             overflow: hidden;
+        }
+
+        html {
+            height: -webkit-fill-available;
         }
 
         .screen {
@@ -37,6 +48,7 @@
             position: absolute;
             top: 0;
             left: 0;
+            padding: 20px;
         }
 
         .active {
@@ -49,16 +61,18 @@
         }
 
         h1 {
-            font-size: 3.5rem;
+            font-size: 8vw;
+            max-font-size: 3rem;
             color: var(--text-color);
             margin-bottom: 2rem;
             text-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
             letter-spacing: 2px;
+            text-align: center;
         }
 
         .btn {
             padding: 15px 40px;
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: bold;
             color: var(--light-text);
             background-color: var(--text-color);
@@ -69,41 +83,53 @@
             box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4);
         }
 
-        .btn:hover {
+        .btn:hover, .btn:active {
             transform: scale(1.05);
-            box-shadow: 0 8px 20px rgba(233, 69, 96, 0.6);
         }
 
         .ai-box {
             position: absolute;
-            bottom: 40px;
+            bottom: 5%;
             background-color: var(--panel-color);
             border: 2px solid var(--accent-color);
-            padding: 12px 25px;
+            padding: 10px 20px;
             border-radius: 15px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .ai-box:hover {
-            background-color: var(--accent-color);
         }
 
         .ai-logo {
-            width: 30px;
-            height: 30px;
+            width: 25px;
+            height: 25px;
             fill: var(--text-color);
         }
 
         .ai-text {
             font-weight: 600;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
-        /* --- LEARN AI SLIDESHOW WINDOW --- */
+        /* --- UI CLOSE BUTTONS --- */
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2.5rem;
+            color: #fff;
+            cursor: pointer;
+            user-select: none;
+            z-index: 10;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+        
+        .close-btn:hover, .close-btn:active {
+            color: var(--text-color);
+        }
+
+        /* --- LEARN AI SLIDESHOW --- */
         .modal {
             display: none;
             position: fixed;
@@ -111,7 +137,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
+            background-color: rgba(0, 0, 0, 0.95);
             z-index: 100;
             justify-content: center;
             align-items: center;
@@ -124,8 +150,8 @@
 
         .carousel-container {
             position: relative;
-            max-width: 80%;
-            max-height: 70%;
+            width: 90%;
+            height: 70%;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -133,17 +159,16 @@
 
         .ad-link-wrapper {
             display: block;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .ad-link-wrapper:hover {
-            transform: scale(1.02);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .carousel-img {
             max-width: 100%;
-            max-height: 70vh;
+            max-height: 100%;
             object-fit: contain;
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(233, 69, 96, 0.3);
@@ -153,63 +178,54 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background-color: rgba(233, 69, 96, 0.8);
+            background-color: rgba(233, 69, 96, 0.9);
             color: white;
             border: none;
-            padding: 15px 20px;
-            font-size: 1.5rem;
+            width: 45px;
+            height: 45px;
+            font-size: 1.25rem;
             cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.2s;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             z-index: 110;
         }
 
-        .carousel-btn:hover {
-            background-color: rgba(233, 69, 96, 1);
-        }
-
-        #prev-btn { left: -70px; }
-        #next-btn { right: -70px; }
-
-        .close-modal {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            font-size: 3rem;
-            color: white;
-            cursor: pointer;
-            transition: color 0.2s;
-            z-index: 110;
-        }
-        .close-modal:hover { color: var(--text-color); }
+        #prev-btn { left: 5px; }
+        #next-btn { right: 5px; }
 
         /* --- GAME SCREEN --- */
         #game-header {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
+            font-size: 1rem;
+            margin-bottom: 5px;
             font-weight: bold;
+            letter-spacing: 1px;
+            text-align: center;
         }
 
         #target-display {
-            font-size: 3rem;
+            font-size: 2.5rem;
             color: var(--text-color);
             font-weight: 800;
             background: var(--panel-color);
-            padding: 5px 25px;
+            padding: 2px 20px;
             border-radius: 10px;
             border: 2px solid var(--accent-color);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         #grid {
             display: grid;
-            grid-template-columns: repeat(10, 50px);
-            grid-template-rows: repeat(7, 50px);
-            gap: 8px;
+            /* Adaptive mobile columns and rows sizing */
+            grid-template-columns: repeat(8, min(10vw, 45px));
+            grid-template-rows: repeat(6, min(10vw, 45px));
+            gap: 6px;
             background-color: var(--panel-color);
-            padding: 15px;
+            padding: 12px;
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-width: 100%;
         }
 
         .cell {
@@ -218,7 +234,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: bold;
             cursor: pointer;
             user-select: none;
@@ -237,23 +253,25 @@
 
         /* --- SCORE SCREEN & ANIMATION --- */
         #score-screen {
-            background-color: rgba(26, 26, 46, 0.95);
+            background-color: rgba(26, 26, 46, 0.98);
             z-index: 10;
         }
 
         .score-container {
             text-align: center;
             background: var(--panel-color);
-            padding: 40px;
+            padding: 30px 20px;
             border-radius: 20px;
             border: 2px solid var(--accent-color);
+            width: 85%;
+            max-width: 400px;
             z-index: 11;
         }
 
         #star-rating {
-            font-size: 4rem;
+            font-size: 3.5rem;
             color: #f1c40f;
-            margin: 20px 0;
+            margin: 15px 0;
             text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
         }
 
@@ -272,18 +290,23 @@
             background-color: #000;
         }
 
+        #ad-screen .ad-link-wrapper {
+            width: 85%;
+            height: 70%;
+        }
+
         #ad-image {
-            max-width: 80%;
-            max-height: 80%;
+            max-width: 100%;
+            max-height: 100%;
             object-fit: contain;
             border-radius: 10px;
-            box-shadow: 0 0 30px rgba(255,255,255,0.2);
+            box-shadow: 0 0 30px rgba(255,255,255,0.1);
         }
 
         .ad-timer {
             position: absolute;
-            bottom: 30px;
-            font-size: 1.2rem;
+            bottom: 5%;
+            font-size: 1rem;
             color: #888;
         }
     </style>
@@ -305,11 +328,10 @@
 
     <!-- Learn AI Modal Window (Slideshow) -->
     <div id="ai-modal" class="modal">
-        <span class="close-modal" onclick="closeAiModal()">&times;</span>
+        <span class="close-btn" onclick="closeAiModal()">&times;</span>
         <div class="carousel-container">
             <button class="carousel-btn" id="prev-btn" onclick="changeSlide(-1)">&#10094;</button>
             
-            <!-- WhatsApp Link wrapper for slideshow -->
             <a href="https://wa.me/94712220206?text=Give%20me%20more%20details%20about%20FREE%20AI%20Webinar" target="_blank" class="ad-link-wrapper">
                 <img id="slideshow-image" class="carousel-img" src="webinar-ad1.png" alt="Learn AI Webinar" onerror="this.src='https://via.placeholder.com/600x400?text=Webinar+Ad+Placeholder'">
             </a>
@@ -320,6 +342,7 @@
 
     <!-- Game Screen -->
     <div id="game-screen" class="screen">
+        <span class="close-btn" onclick="exitGame()">&times;</span>
         <div id="game-header">FIND ALL THE NUMBERS BELOW:</div>
         <div id="target-display">0</div>
         <div id="grid"></div>
@@ -338,7 +361,6 @@
 
     <!-- Ad Screen -->
     <div id="ad-screen" class="screen">
-        <!-- WhatsApp Link wrapper for gameplay mid-level ad break -->
         <a href="https://wa.me/94712220206?text=Give%20me%20more%20details%20about%20FREE%20AI%20Webinar" target="_blank" class="ad-link-wrapper">
             <img id="ad-image" src="webinar-ad1.png" alt="Webinar Advertisement" onerror="this.src='https://via.placeholder.com/600x400?text=Webinar+Ad+Placeholder'">
         </a>
@@ -346,13 +368,12 @@
     </div>
 
     <script>
-        // Game Configuration
-        const ROWS = 7;
-        const COLS = 10;
+        // Game Configuration Updated to 6x8
+        const ROWS = 6;
+        const COLS = 8;
         const TOTAL_CELLS = ROWS * COLS;
         const MIN_TARGET_PERCENT = 0.25; 
 
-        // Ad Image Array
         const adImages = ["webinar-ad1.png", "webinar-ad2.png", "webinar-ad3.png", "webinar-ad4.png"];
         let currentAdIndex = 0; 
         let levelAdIndex = 0;   
@@ -362,17 +383,18 @@
         let totalTargetsCount = 0;
         let foundTargetsCount = 0;
         let startTime = 0;
+        let activeAdTimeout = null;
+        let activeAdInterval = null;
         
         let canvas, ctx, stars = [];
         let animationId;
 
-        // Screen Handling
         function changeScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
         }
 
-        // Learn AI Slideshow Modal Logic
+        // Learn AI Modal Carousel Logic
         function openAiModal() {
             currentAdIndex = 0;
             updateSlideshowImage();
@@ -398,10 +420,18 @@
             imgElement.src = adImages[currentAdIndex];
         }
 
-        // Game Setup
+        // Game Navigation and Play Logic
         function startGame() {
             changeScreen('game-screen');
             setupLevel();
+        }
+
+        function exitGame() {
+            // Stops background routines and exits safely to the main menu
+            cancelAnimationFrame(animationId);
+            clearInterval(activeAdInterval);
+            clearTimeout(activeAdTimeout);
+            changeScreen('home-screen');
         }
 
         function setupLevel() {
@@ -412,8 +442,9 @@
             targetNumber = Math.floor(Math.random() * 9) + 1; 
             document.getElementById('target-display').textContent = targetNumber;
 
-            const minTargets = Math.ceil(TOTAL_CELLS * MIN_TARGET_PERCENT);
-            const actualTargetsCount = minTargets + Math.floor(Math.random() * 10); 
+            // Compute target counts based on the updated 48-cell block setup
+            const minTargets = Math.ceil(TOTAL_CELLS * MIN_TARGET_PERCENT); // 25% of 48 = 12 minimum cells
+            const actualTargetsCount = minTargets + Math.floor(Math.random() * 6); 
             totalTargetsCount = actualTargetsCount;
 
             let cellValues = [];
@@ -478,7 +509,7 @@
             initStarAnimation();
         }
 
-        // Stars Canvas Engine
+        // Star Engine Canvas
         function initStarAnimation() {
             canvas = document.getElementById('star-canvas');
             ctx = canvas.getContext('2d');
@@ -486,11 +517,11 @@
             canvas.height = window.innerHeight;
 
             stars = [];
-            for (let i = 0; i < 40; i++) {
+            for (let i = 0; i < 30; i++) {
                 stars.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * -canvas.height,
-                    size: Math.random() * 15 + 10,
+                    size: Math.random() * 12 + 8,
                     speed: Math.random() * 3 + 2,
                     angle: Math.random() * 360
                 });
@@ -530,13 +561,12 @@
             }
         }
 
-        // Mid-Level Ad Screen Transition Logic
+        // Ad Transitions
         function showAd() {
             cancelAnimationFrame(animationId); 
             
             const adImgElement = document.getElementById('ad-image');
             adImgElement.src = adImages[levelAdIndex];
-            
             levelAdIndex = (levelAdIndex + 1) % adImages.length; 
 
             changeScreen('ad-screen');
@@ -545,11 +575,11 @@
             const timerDisplay = document.getElementById('countdown');
             timerDisplay.textContent = timeLeft;
 
-            const interval = setInterval(() => {
+            activeAdInterval = setInterval(() => {
                 timeLeft--;
                 timerDisplay.textContent = timeLeft;
                 if(timeLeft <= 0) {
-                    clearInterval(interval);
+                    clearInterval(activeAdInterval);
                     nextLevel();
                 }
             }, 1000);
